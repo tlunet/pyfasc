@@ -5,4 +5,4 @@ in order to estimate the typical performance factor induced by Python._
 
 ## Current codes
 
-- [01_advDiffSolver](./codes/01_advDiffSolver) : C++ and Python-Numpy based implementation of a 2D linear advection diffusion solver.
+- [01_advDiffSolver](./codes/01_advDiffSolver) : 2D Advection Diffusion solver
