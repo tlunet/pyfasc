@@ -18,4 +18,4 @@ cross2 circular2 0
 - one string for the flow type (here `circular2`)
 - one float for the diffusion coefficient, or viscosity (here `0`)
 - one float for the final time of simulation (here `0.125`)
-- one integer for the number of time-steps (here `12`)
+- one integer for the number of time-steps (here `125`)
