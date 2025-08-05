@@ -47,7 +47,7 @@ class Problem:
         initType, (x, y) = self.initType, self.grid
 
         if initType == "gauss":
-            u[sIn, sIn] = np.exp(-200*((x-0.25)**2 + (y-0.25)**2))
+            u[sIn, sIn] = np.exp(-200*((x-0.5)**2 + (y-0.5)**2))
         elif initType == "square":
             u[sIn, sIn] = (x > 0.2)*(x < 0.3)*(y > 0.2)*(y < 0.3)
         elif initType == "cross":
@@ -65,7 +65,7 @@ class Problem:
         dX, dY, (x, y) = 1/self.nX, 1/self.nY, self.grid
 
         if flowType == "diagonal":
-            vX = vY = 1
+            vX, vY = 1, 1
         elif flowType == "circular":
             r = np.hypot(x-0.5, y-0.5)
             phi= np.arctan2(y-0.5, x-0.5)
@@ -105,29 +105,35 @@ class Problem:
 
     def simulate(self):
         u0, nX, nY = self.u, self.nX, self.nY
-        uEval = np.empty_like(u0)
+        uEval = np.zeros_like(u0)
 
         u1 = np.empty((nX, nY))
         np.copyto(u1, u0[sIn, sIn])
-        k = np.empty_like(u1)
+        k = np.zeros_like(u1)
 
         dt = self.tEnd/self.nSteps
         tBeg = time()
         for i in range(self.nSteps):
             t = self.t
 
-            self.computeRHS(u0, t, k); np.copyto(uEval[sIn, sIn], k)
+            self.computeRHS(u0, t, k)
+            np.copyto(uEval[sIn, sIn], k)
             k *= dt/6; u1 += k
 
-            uEval *= dt/2; uEval += u0
-            self.computeRHS(uEval, t+dt/2, k); np.copyto(uEval[sIn, sIn], k)
+            uEval *= dt/2
+            uEval += u0
+            self.computeRHS(uEval, t+dt/2, k)
+            np.copyto(uEval[sIn, sIn], k)
             k *= dt/3; u1 += k
 
-            uEval *= dt/2; uEval += u0
-            self.computeRHS(uEval, t+dt/2, k); np.copyto(uEval[sIn, sIn], k)
+            uEval *= dt/2
+            uEval += u0
+            self.computeRHS(uEval, t+dt/2, k)
+            np.copyto(uEval[sIn, sIn], k)
             k *= dt/3; u1 += k
 
-            uEval *= dt; uEval += u0
+            uEval *= dt
+            uEval += u0
             self.computeRHS(uEval, t+dt, k)
             k *= dt/6; u1 += k
 
@@ -139,13 +145,31 @@ class Problem:
         print(f"tWall/DoF : {tWall/(self.nSteps*nX*nY)}")
 
 
+# Simulation
 p = Problem("input.txt")
-u = p.u
-
-plt.figure()
-plt.imshow(u[sIn, sIn])
+u0 = p.u.copy()
 
 p.simulate()
+uEnd = np.abs(p.u)  # remove some negative artefacts for plots
 
-plt.figure()
-plt.imshow(u[sIn, sIn])
+# Plotting
+fig, ax = plt.subplots(1, 2, figsize=(12, 5))
+
+grid = [x.ravel() for x in p.grid]
+
+c0 = ax[0].contourf(*grid, u0[sIn, sIn])
+ax[0].set_title('T=0')
+ax[0].set_xlabel('X')
+ax[0].set_ylabel('Y')
+fig.colorbar(c0, ax=ax[0], orientation='vertical')
+
+c1 = ax[1].contourf(*grid, uEnd[sIn, sIn])
+ax[1].set_title(f'T={p.tEnd}')
+ax[1].set_xlabel('X')
+ax[1].set_ylabel('Y')
+fig.colorbar(c1, ax=ax[1], orientation='vertical')
+
+plt.tight_layout()
+plt.savefig("solution.png")
+
+plt.show()

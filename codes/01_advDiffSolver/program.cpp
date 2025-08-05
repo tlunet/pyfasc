@@ -15,7 +15,7 @@ public:
     static const int nHalo = 2;
     const int nX, nY;
     const int nXH, nYH;
-    
+
     const int size;
 protected:
     vector<double> data;
@@ -23,15 +23,15 @@ protected:
     inline void checkShape(const Array2D& other) { assert((this->nX == other.nX) and (this->nY == other.nY)); }
 
 public:
-    Array2D(int nX, int nY): 
+    Array2D(int nX, int nY):
         nX(nX), nY(nY), nXH(nX+2*nHalo), nYH(nY+2*nHalo),
         size(nXH*nYH), data(size) {}
-    
+
     Array2D(const Array2D& other):
         nX(other.nX), nY(other.nY), nXH(other.nXH), nYH(other.nYH),
         size(other.size), data(other.data) {}
-        
-    inline Array2D& operator=(const Array2D& other) { 
+
+    inline Array2D& operator=(const Array2D& other) {
         if (this != &other) {
             checkShape(other);
             for (int y = 0; y < nY; y++)
@@ -74,7 +74,7 @@ public:
             this->value(x,y) = this->value(x,y) + factor*other.value(x,y);
         }
     }
-    
+
     inline const double& value(int x, int y) const { return data.at(idx(x, y)); }
     inline double& value(int x, int y) { return data.at(idx(x, y)); }
 
@@ -151,7 +151,7 @@ class Coeffs2D {
     inline int idx(int s, int x, int y) const { return (s+nHalo) + x*xChunk + y*yChunk; }
 
 public:
-    Coeffs2D(int nX, int nY): 
+    Coeffs2D(int nX, int nY):
         data(2*(2*nHalo+1)*nX*nY), nX(nX), nY(nY),
         xChunk((2*nHalo+1)), yChunk((2*nHalo+1)*nX), cChunk((2*nHalo+1)*nX*nY) {}
 
@@ -171,7 +171,7 @@ public:
 
         if (flowType == "diagonal") {
             for (int y = 0; y < nY; y++)
-            for (int x = 0; x < nX; x++) 
+            for (int x = 0; x < nX; x++)
             for (int s = -nHalo; s < nHalo+1; s++) {
                 valX(s, x, y) = -cAdv[s+nHalo]/dX + viscosity*cDif[s+nHalo]/dX2;
                 valY(s, x, y) = -cAdv[s+nHalo]/dY + viscosity*cDif[s+nHalo]/dY2;
@@ -180,7 +180,7 @@ public:
         } else if (flowType == "circular") {
             for (int y = 0; y < nY; y++)
             for (int x = 0; x < nX; x++) {
-                
+
                 double r = std::hypot(x*dX-0.5, y*dY-0.5);
                 double phi = std::atan2(y*dY-0.5, x*dX-0.5);
                 double rho = std::exp(-10*r*r);
@@ -190,13 +190,13 @@ public:
                 for (int s = -nHalo; s < nHalo+1; s++) {
                     valX(s, x, y) = -vX*cAdv[s+nHalo]/dX + viscosity*cDif[s+nHalo]/dX2;
                     valY(s, x, y) = -vY*cAdv[s+nHalo]/dY + viscosity*cDif[s+nHalo]/dY2;
-                } 
+                }
             }
 
         } else if (flowType == "circular2") {
             for (int y = 0; y < nY; y++)
             for (int x = 0; x < nX; x++) {
-                
+
                 double r = std::hypot(x*dX-0.5, y*dY-0.5);
                 double phi = std::atan2(y*dY-0.5, x*dX-0.5);
                 double rho = std::exp(-5*r*r);
@@ -206,9 +206,9 @@ public:
                 for (int s = -nHalo; s < nHalo+1; s++) {
                     valX(s, x, y) = -vX*cAdv[s+nHalo]/dX + viscosity*cDif[s+nHalo]/dX2;
                     valY(s, x, y) = -vY*cAdv[s+nHalo]/dY + viscosity*cDif[s+nHalo]/dY2;
-                } 
+                }
             }
-            
+
         } else {
             throw "unknown flowType";
         }
@@ -246,12 +246,12 @@ private:
     const Array2D& computeRHS(Array2D& uEval, const double&, Array2D& out) {
         assert((out.nX == uEval.nX) and (out.nY == uEval.nY));
         uEval.updateHalo();
-    
+
         for (int y = 0; y < uEval.nY; y++)
         for (int x = 0; x < uEval.nX; x++) {
             out.value(x, y) = 0;
             for (int s = -2; s < 3; s++) {
-                out.value(x, y) += coeffs->valX(s, x, y) * uEval.value(x+s, y) 
+                out.value(x, y) += coeffs->valX(s, x, y) * uEval.value(x+s, y)
                                  + coeffs->valY(s, x, y) * uEval.value(x, y+s);
             }
         }
@@ -288,7 +288,7 @@ public:
 
             // Fourth stage
             uEval *= dt; uEval += u0;
-            computeRHS(uEval, t+dt, k); 
+            computeRHS(uEval, t+dt, k);
             k *= dt/6; u1 += k;
 
             // Save result
@@ -331,7 +331,7 @@ public:
 
             // Fourth stage
             uEval.aypx(dt, u0);
-            computeRHS(uEval, t+dt, k); 
+            computeRHS(uEval, t+dt, k);
             u1.axpy(dt/6, k);
 
             // Save result
@@ -341,7 +341,7 @@ public:
         auto tEnd = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> duration = tEnd-tBeg;
         std::cout << "tWall : " << duration.count() << " seconds" << std::endl;
-    } 
+    }
 
     void writeSolution(const string& fileName) { u->write(fileName); }
 
