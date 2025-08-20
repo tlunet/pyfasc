@@ -1,0 +1,132 @@
+[
+  {
+    "input": "64 64\ngauss\ndiagonal 0.0\n1.0 400",
+    "python": {
+      "runtime": 0.26751089096069336,
+      "stdout": "tWall : 0.045584917068481445\ntWall/DoF : 2.782282535918057e-08\n",
+      "stderr": ""
+    },
+    "cpp": {
+      "runtime": 0.3042459487915039,
+      "stdout": "tWall : 0.049691 seconds\ntWall/DoF : 3.0329e-08 seconds\n",
+      "stderr": ""
+    }
+  },
+  {
+    "input": "170 170\ngauss\ndiagonal 0.0\n1.0 400",
+    "python": {
+      "runtime": 0.5655760765075684,
+      "stdout": "tWall : 0.2654588222503662\ntWall/DoF : 2.2963565938612995e-08\n",
+      "stderr": ""
+    },
+    "cpp": {
+      "runtime": 0.22700881958007812,
+      "stdout": "tWall : 0.19064 seconds\ntWall/DoF : 1.64914e-08 seconds\n",
+      "stderr": ""
+    }
+  },
+  {
+    "input": "277 277\ngauss\ndiagonal 0.0\n1.0 400",
+    "python": {
+      "runtime": 1.0104272365570068,
+      "stdout": "tWall : 0.6997721195220947\ntWall/DoF : 2.280011858365464e-08\n",
+      "stderr": ""
+    },
+    "cpp": {
+      "runtime": 0.5490429401397705,
+      "stdout": "tWall : 0.513281 seconds\ntWall/DoF : 1.67238e-08 seconds\n",
+      "stderr": ""
+    }
+  },
+  {
+    "input": "384 384\ngauss\ndiagonal 0.0\n1.0 400",
+    "python": {
+      "runtime": 1.567514181137085,
+      "stdout": "tWall : 1.170104742050171\ntWall/DoF : 1.98382015999717e-08\n",
+      "stderr": ""
+    },
+    "cpp": {
+      "runtime": 1.0235488414764404,
+      "stdout": "tWall : 0.968859 seconds\ntWall/DoF : 1.64262e-08 seconds\n",
+      "stderr": ""
+    }
+  },
+  {
+    "input": "490 490\ngauss\ndiagonal 0.0\n1.0 400",
+    "python": {
+      "runtime": 2.5359110832214355,
+      "stdout": "tWall : 2.081644058227539\ntWall/DoF : 2.1674761122735726e-08\n",
+      "stderr": ""
+    },
+    "cpp": {
+      "runtime": 1.660412073135376,
+      "stdout": "tWall : 1.58561 seconds\ntWall/DoF : 1.65099e-08 seconds\n",
+      "stderr": ""
+    }
+  },
+  {
+    "input": "597 597\ngauss\ndiagonal 0.0\n1.0 400",
+    "python": {
+      "runtime": 3.7119688987731934,
+      "stdout": "tWall : 3.133592128753662\ntWall/DoF : 2.1980310042350657e-08\n",
+      "stderr": "/private/var/folders/p8/zx782k7n267cx95q1fjqnc880000gn/T/tmpjzkueg7e/user_program.py:132: RuntimeWarning: overflow encountered in add\n  out += tmp\n/private/var/folders/p8/zx782k7n267cx95q1fjqnc880000gn/T/tmpjzkueg7e/user_program.py:127: RuntimeWarning: overflow encountered in add\n  out += tmp\n/private/var/folders/p8/zx782k7n267cx95q1fjqnc880000gn/T/tmpjzkueg7e/user_program.py:126: RuntimeWarning: invalid value encountered in multiply\n  tmp *= coeffs[0, s]\n/private/var/folders/p8/zx782k7n267cx95q1fjqnc880000gn/T/tmpjzkueg7e/user_program.py:131: RuntimeWarning: invalid value encountered in multiply\n  tmp *= coeffs[1, s]\n/private/var/folders/p8/zx782k7n267cx95q1fjqnc880000gn/T/tmpjzkueg7e/user_program.py:127: RuntimeWarning: invalid value encountered in add\n  out += tmp\n/private/var/folders/p8/zx782k7n267cx95q1fjqnc880000gn/T/tmpjzkueg7e/user_program.py:132: RuntimeWarning: invalid value encountered in add\n  out += tmp\n/private/var/folders/p8/zx782k7n267cx95q1fjqnc880000gn/T/tmpjzkueg7e/user_program.py:126: RuntimeWarning: overflow encountered in multiply\n  tmp *= coeffs[0, s]\n/private/var/folders/p8/zx782k7n267cx95q1fjqnc880000gn/T/tmpjzkueg7e/user_program.py:131: RuntimeWarning: overflow encountered in multiply\n  tmp *= coeffs[1, s]\n"
+    },
+    "cpp": {
+      "runtime": 2.502296209335327,
+      "stdout": "tWall : 2.39417 seconds\ntWall/DoF : 1.67937e-08 seconds\n",
+      "stderr": ""
+    }
+  },
+  {
+    "input": "704 704\ngauss\ndiagonal 0.0\n1.0 400",
+    "python": {
+      "runtime": 4.5503089427948,
+      "stdout": "tWall : 3.901505708694458\ntWall/DoF : 1.9680083515738282e-08\n",
+      "stderr": "/private/var/folders/p8/zx782k7n267cx95q1fjqnc880000gn/T/tmpjzkueg7e/user_program.py:127: RuntimeWarning: overflow encountered in add\n  out += tmp\n/private/var/folders/p8/zx782k7n267cx95q1fjqnc880000gn/T/tmpjzkueg7e/user_program.py:132: RuntimeWarning: overflow encountered in add\n  out += tmp\n/private/var/folders/p8/zx782k7n267cx95q1fjqnc880000gn/T/tmpjzkueg7e/user_program.py:127: RuntimeWarning: invalid value encountered in add\n  out += tmp\n/private/var/folders/p8/zx782k7n267cx95q1fjqnc880000gn/T/tmpjzkueg7e/user_program.py:132: RuntimeWarning: invalid value encountered in add\n  out += tmp\n/private/var/folders/p8/zx782k7n267cx95q1fjqnc880000gn/T/tmpjzkueg7e/user_program.py:126: RuntimeWarning: invalid value encountered in multiply\n  tmp *= coeffs[0, s]\n/private/var/folders/p8/zx782k7n267cx95q1fjqnc880000gn/T/tmpjzkueg7e/user_program.py:131: RuntimeWarning: invalid value encountered in multiply\n  tmp *= coeffs[1, s]\n/private/var/folders/p8/zx782k7n267cx95q1fjqnc880000gn/T/tmpjzkueg7e/user_program.py:126: RuntimeWarning: overflow encountered in multiply\n  tmp *= coeffs[0, s]\n/private/var/folders/p8/zx782k7n267cx95q1fjqnc880000gn/T/tmpjzkueg7e/user_program.py:131: RuntimeWarning: overflow encountered in multiply\n  tmp *= coeffs[1, s]\n"
+    },
+    "cpp": {
+      "runtime": 3.431797981262207,
+      "stdout": "tWall : 3.28679 seconds\ntWall/DoF : 1.65793e-08 seconds\n",
+      "stderr": ""
+    }
+  },
+  {
+    "input": "810 810\ngauss\ndiagonal 0.0\n1.0 400",
+    "python": {
+      "runtime": 6.542147874832153,
+      "stdout": "tWall : 5.688822031021118\ntWall/DoF : 2.1676657639921956e-08\n",
+      "stderr": "/private/var/folders/p8/zx782k7n267cx95q1fjqnc880000gn/T/tmpjzkueg7e/user_program.py:127: RuntimeWarning: overflow encountered in add\n  out += tmp\n/private/var/folders/p8/zx782k7n267cx95q1fjqnc880000gn/T/tmpjzkueg7e/user_program.py:132: RuntimeWarning: overflow encountered in add\n  out += tmp\n/private/var/folders/p8/zx782k7n267cx95q1fjqnc880000gn/T/tmpjzkueg7e/user_program.py:126: RuntimeWarning: invalid value encountered in multiply\n  tmp *= coeffs[0, s]\n/private/var/folders/p8/zx782k7n267cx95q1fjqnc880000gn/T/tmpjzkueg7e/user_program.py:131: RuntimeWarning: invalid value encountered in multiply\n  tmp *= coeffs[1, s]\n/private/var/folders/p8/zx782k7n267cx95q1fjqnc880000gn/T/tmpjzkueg7e/user_program.py:126: RuntimeWarning: overflow encountered in multiply\n  tmp *= coeffs[0, s]\n/private/var/folders/p8/zx782k7n267cx95q1fjqnc880000gn/T/tmpjzkueg7e/user_program.py:127: RuntimeWarning: invalid value encountered in add\n  out += tmp\n/private/var/folders/p8/zx782k7n267cx95q1fjqnc880000gn/T/tmpjzkueg7e/user_program.py:131: RuntimeWarning: overflow encountered in multiply\n  tmp *= coeffs[1, s]\n/private/var/folders/p8/zx782k7n267cx95q1fjqnc880000gn/T/tmpjzkueg7e/user_program.py:132: RuntimeWarning: invalid value encountered in add\n  out += tmp\n"
+    },
+    "cpp": {
+      "runtime": 4.554775953292847,
+      "stdout": "tWall : 4.3662 seconds\ntWall/DoF : 1.6637e-08 seconds\n",
+      "stderr": ""
+    }
+  },
+  {
+    "input": "917 917\ngauss\ndiagonal 0.0\n1.0 400",
+    "python": {
+      "runtime": 8.562843084335327,
+      "stdout": "tWall : 7.591305255889893\ntWall/DoF : 2.256928457825555e-08\n",
+      "stderr": "/private/var/folders/p8/zx782k7n267cx95q1fjqnc880000gn/T/tmpjzkueg7e/user_program.py:132: RuntimeWarning: overflow encountered in add\n  out += tmp\n/private/var/folders/p8/zx782k7n267cx95q1fjqnc880000gn/T/tmpjzkueg7e/user_program.py:127: RuntimeWarning: overflow encountered in add\n  out += tmp\n/private/var/folders/p8/zx782k7n267cx95q1fjqnc880000gn/T/tmpjzkueg7e/user_program.py:127: RuntimeWarning: invalid value encountered in add\n  out += tmp\n/private/var/folders/p8/zx782k7n267cx95q1fjqnc880000gn/T/tmpjzkueg7e/user_program.py:126: RuntimeWarning: invalid value encountered in multiply\n  tmp *= coeffs[0, s]\n/private/var/folders/p8/zx782k7n267cx95q1fjqnc880000gn/T/tmpjzkueg7e/user_program.py:131: RuntimeWarning: invalid value encountered in multiply\n  tmp *= coeffs[1, s]\n/private/var/folders/p8/zx782k7n267cx95q1fjqnc880000gn/T/tmpjzkueg7e/user_program.py:132: RuntimeWarning: invalid value encountered in add\n  out += tmp\n/private/var/folders/p8/zx782k7n267cx95q1fjqnc880000gn/T/tmpjzkueg7e/user_program.py:126: RuntimeWarning: overflow encountered in multiply\n  tmp *= coeffs[0, s]\n/private/var/folders/p8/zx782k7n267cx95q1fjqnc880000gn/T/tmpjzkueg7e/user_program.py:131: RuntimeWarning: overflow encountered in multiply\n  tmp *= coeffs[1, s]\n"
+    },
+    "cpp": {
+      "runtime": 5.989696979522705,
+      "stdout": "tWall : 5.7477 seconds\ntWall/DoF : 1.70882e-08 seconds\n",
+      "stderr": ""
+    }
+  },
+  {
+    "input": "1024 1024\ngauss\ndiagonal 0.0\n1.0 400",
+    "python": {
+      "runtime": 9.845830917358398,
+      "stdout": "tWall : 8.639409303665161\ntWall/DoF : 2.0597956904566674e-08\n",
+      "stderr": "/private/var/folders/p8/zx782k7n267cx95q1fjqnc880000gn/T/tmpjzkueg7e/user_program.py:127: RuntimeWarning: overflow encountered in add\n  out += tmp\n/private/var/folders/p8/zx782k7n267cx95q1fjqnc880000gn/T/tmpjzkueg7e/user_program.py:132: RuntimeWarning: overflow encountered in add\n  out += tmp\n/private/var/folders/p8/zx782k7n267cx95q1fjqnc880000gn/T/tmpjzkueg7e/user_program.py:126: RuntimeWarning: invalid value encountered in multiply\n  tmp *= coeffs[0, s]\n/private/var/folders/p8/zx782k7n267cx95q1fjqnc880000gn/T/tmpjzkueg7e/user_program.py:131: RuntimeWarning: invalid value encountered in multiply\n  tmp *= coeffs[1, s]\n/private/var/folders/p8/zx782k7n267cx95q1fjqnc880000gn/T/tmpjzkueg7e/user_program.py:126: RuntimeWarning: overflow encountered in multiply\n  tmp *= coeffs[0, s]\n/private/var/folders/p8/zx782k7n267cx95q1fjqnc880000gn/T/tmpjzkueg7e/user_program.py:127: RuntimeWarning: invalid value encountered in add\n  out += tmp\n/private/var/folders/p8/zx782k7n267cx95q1fjqnc880000gn/T/tmpjzkueg7e/user_program.py:131: RuntimeWarning: overflow encountered in multiply\n  tmp *= coeffs[1, s]\n/private/var/folders/p8/zx782k7n267cx95q1fjqnc880000gn/T/tmpjzkueg7e/user_program.py:132: RuntimeWarning: invalid value encountered in add\n  out += tmp\n"
+    },
+    "cpp": {
+      "runtime": 7.391398906707764,
+      "stdout": "tWall : 7.09199 seconds\ntWall/DoF : 1.69086e-08 seconds\n",
+      "stderr": ""
+    }
+  }
+]
