@@ -1,3 +1,20 @@
 - 2d cfl condition nochmal recherchieren
 
+CI/CD
 
+
+- 3 Kategorien für User:
+  - Programmentwickler
+  - Algorithmusentwickler
+  - Tester
+- Validierung über GitHub CI/CD
+- Validierung:
+  - 
+Zu nächstem Mal:
+- Mit CI/CD rumspielen bzgl. Validierung
+- Recherchieren zur die Validierung: 
+  - Grid convergence
+  - Order convergence
+  - Local truncation error
+  - Global truncation error
+  - Order of accuracy of spacetime discretization
