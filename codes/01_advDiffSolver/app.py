@@ -3,12 +3,8 @@ import subprocess
 import os
 import tempfile
 import json
-import time
 import shutil
-import math
-from pathlib import Path
 import pandas as pd
-import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import zipfile
@@ -18,8 +14,7 @@ import io
 st.set_page_config(
     page_title="CodeBench Performance Analyzer",
     page_icon="⚡",
-    layout="wide",
-    initial_sidebar_state="expanded"
+    layout="wide"
 )
 
 # Custom CSS for better styling
@@ -71,174 +66,29 @@ if 'python_code' not in st.session_state:
     st.session_state.python_code = ""
 if 'cpp_code' not in st.session_state:
     st.session_state.cpp_code = ""
-if 'validation_results' not in st.session_state:
-    st.session_state.validation_results = {}
 if 'benchmark_results' not in st.session_state:
     st.session_state.benchmark_results = None
 
-def load_reference_outputs():
-    """Load reference outputs from existing files for validation"""
-    try:
-        # Look for reference files (created by C++ program or designated reference)
-        ref_files = []
-        
-        # Check if we have reference files in a dedicated folder
-        if os.path.exists('reference'):
-            ref_init_path = 'reference/uInit.txt'
-            ref_end_path = 'reference/uEnd.txt'
-        else:
-            # Fallback: use current directory files as reference
-            ref_init_path = 'uInit.txt'
-            ref_end_path = 'uEnd.txt'
-        
-        if os.path.exists(ref_init_path) and os.path.exists(ref_end_path):
-            with open(ref_init_path, 'r') as f:
-                ref_init = f.read().strip()
-            with open(ref_end_path, 'r') as f:
-                ref_end = f.read().strip()
-            return ref_init, ref_end
-        else:
-            return None, None
-    except Exception as e:
-        st.error(f"Could not load reference outputs: {e}")
-        return None, None
-
-def validate_program(code, language, filename):
-    """Validate uploaded program by running it and comparing output with reference"""
-    try:
-        with tempfile.TemporaryDirectory() as temp_dir:
-            # Copy input.txt to temp directory
-            shutil.copy('input.txt', temp_dir)
-            
-            if language == "python":
-                temp_file = os.path.join(temp_dir, filename)
-                with open(temp_file, 'w') as f:
-                    f.write(code)
-                
-                # Run the Python program
-                result = subprocess.run(
-                    [st.session_state.python_executable, filename],
-                    cwd=temp_dir,
-                    capture_output=True,
-                    text=True,
-                    timeout=30
-                )
-                
-            elif language == "cpp":
-                cpp_file = os.path.join(temp_dir, filename)
-                exe_file = os.path.join(temp_dir, 'temp_program')
-                
-                with open(cpp_file, 'w') as f:
-                    f.write(code)
-                
-                # Compile C++
-                compile_result = subprocess.run(
-                    ['g++', '-O2', filename, '-o', 'temp_program'],
-                    cwd=temp_dir,
-                    capture_output=True,
-                    text=True
-                )
-                
-                if compile_result.returncode != 0:
-                    return False, f"Compilation failed: {compile_result.stderr}"
-                
-                # Run the C++ program
-                result = subprocess.run(
-                    ['./temp_program'],
-                    cwd=temp_dir,
-                    capture_output=True,
-                    text=True,
-                    timeout=30
-                )
-            
-            if result.returncode != 0:
-                return False, f"Runtime error: {result.stderr}"
-            
-            # Check if output files were created
-            init_file = os.path.join(temp_dir, 'uInit.txt')
-            end_file = os.path.join(temp_dir, 'uEnd.txt')
-            
-            if not (os.path.exists(init_file) and os.path.exists(end_file)):
-                return False, "Program did not generate required output files (uInit.txt, uEnd.txt)"
-            
-            # Compare with reference outputs
-            with open(init_file, 'r') as f:
-                test_init = f.read().strip()
-            with open(end_file, 'r') as f:
-                test_end = f.read().strip()
-            
-            ref_init, ref_end = load_reference_outputs()
-            if ref_init is None or ref_end is None:
-                return False, "Could not load reference outputs for comparison"
-            
-            # Compare outputs (allowing for different grid sizes)
-            if test_init == ref_init and test_end == ref_end:
-                return True, "Validation successful - outputs match reference"
-            else:
-                # Check for numerical similarity and format consistency
-                try:
-                    test_init_lines = test_init.strip().split('\n')
-                    test_end_lines = test_end.strip().split('\n')
-                    
-                    # Basic format validation - check that files exist and have content
-                    if len(test_init_lines) == 0 or len(test_end_lines) == 0:
-                        return False, "Output files are empty"
-                    
-                    # Check that output contains numerical values
-                    try:
-                        # Test first line of each file
-                        first_init_vals = [float(x) for x in test_init_lines[0].split()]
-                        first_end_vals = [float(x) for x in test_end_lines[0].split()]
-                        
-                        if len(first_init_vals) == 0 or len(first_end_vals) == 0:
-                            return False, "Output lines contain no numerical values"
-                            
-                        # Check that grid dimensions are consistent
-                        if len(first_init_vals) != len(first_end_vals):
-                            return False, "Grid dimensions inconsistent between uInit.txt and uEnd.txt"
-                            
-                        # Check that we have a square grid
-                        expected_cols = len(first_init_vals)
-                        if len(test_init_lines) != expected_cols or len(test_end_lines) != expected_cols:
-                            return False, f"Expected {expected_cols}x{expected_cols} grid, but got {len(test_init_lines)}x{len(first_init_vals)} and {len(test_end_lines)}x{len(first_end_vals)}"
-                        
-                        # Validate that all values are reasonable (not NaN, not infinite)
-                        sample_lines = min(3, len(test_init_lines))
-                        for i in range(sample_lines):
-                            init_vals = [float(x) for x in test_init_lines[i].split()]
-                            end_vals = [float(x) for x in test_end_lines[i].split()]
-                            
-                            for val in init_vals + end_vals:
-                                if math.isnan(val) or math.isinf(val):
-                                    return False, f"Output contains unreasonable values: {val}"
-                                if not (-1e10 < val < 1e10):  # Reasonable range
-                                    return False, f"Output contains unreasonable values: {val}"
-                        
-                        return True, f"Validation successful - generated {len(test_init_lines)}x{len(first_init_vals)} numerical grid output"
-                        
-                    except ValueError as e:
-                        return False, f"Output contains non-numerical values: {e}"
-                        
-                except Exception as e:
-                    return False, f"Could not parse output for validation: {e}"
-                    
-    except subprocess.TimeoutExpired:
-        return False, "Program execution timed out"
-    except Exception as e:
-        return False, f"Validation error: {e}"
+def get_powers_of_two(min_val, max_val):
+    """Get all powers of 2 between min_val and max_val (inclusive)"""
+    powers = []
+    power = 0
+    while True:
+        val = 2 ** power
+        if val > max_val:
+            break
+        if val >= min_val:
+            powers.append(val)
+        power += 1
+    return powers
 
 def generate_inputs_content(variable_type, start_val, end_val, num_steps, init_type="gauss", flow_type="diagonal", viscosity=0.0, end_time=1):
     """Generate inputs.txt content based on selected variable and range"""
     content_lines = []
     
     if variable_type == "Grid Size (N_x/N_y)":
-        # Vary grid size, keep steps constant at 400
-        sizes = []
-        if num_steps == 1:
-            sizes = [start_val]
-        else:
-            step = (end_val - start_val) / (num_steps - 1)
-            sizes = [int(start_val + i * step) for i in range(num_steps)]
+        # For grid size: use all powers of 2 between start_val and end_val
+        sizes = get_powers_of_two(start_val, end_val)
         
         for size in sizes:
             content_lines.append(f"{size} {size}")
@@ -248,7 +98,7 @@ def generate_inputs_content(variable_type, start_val, end_val, num_steps, init_t
             content_lines.append("")  # Empty line between test cases
             
     elif variable_type == "Time Steps":
-        # Keep grid size constant at 128x128, vary steps
+        # For time steps: keep the old system with num_steps
         steps_values = []
         if num_steps == 1:
             steps_values = [start_val]
@@ -400,52 +250,6 @@ def create_performance_plots(results):
     
     return fig, speedup_fig
 
-def save_configuration(config_name, variable_type, start_val, end_val, num_steps):
-    """Save current configuration"""
-    config = {
-        'variable_type': variable_type,
-        'start_val': start_val,
-        'end_val': end_val,
-        'num_steps': num_steps
-    }
-    
-    if 'saved_configs' not in st.session_state:
-        st.session_state.saved_configs = {}
-    
-    st.session_state.saved_configs[config_name] = config
-    
-    # Also save to file
-    configs_file = 'saved_configs.json'
-    try:
-        if os.path.exists(configs_file):
-            with open(configs_file, 'r') as f:
-                all_configs = json.load(f)
-        else:
-            all_configs = {}
-        
-        all_configs[config_name] = config
-        
-        with open(configs_file, 'w') as f:
-            json.dump(all_configs, f, indent=2)
-            
-        return True
-    except Exception as e:
-        st.error(f"Could not save configuration: {e}")
-        return False
-
-def load_configurations():
-    """Load saved configurations"""
-    configs_file = 'saved_configs.json'
-    try:
-        if os.path.exists(configs_file):
-            with open(configs_file, 'r') as f:
-                return json.load(f)
-        else:
-            return {}
-    except Exception as e:
-        st.error(f"Could not load configurations: {e}")
-        return {}
-
 def create_download_package(results):
     """Create a downloadable package with all results"""
     zip_buffer = io.BytesIO()
@@ -512,45 +316,9 @@ st.markdown("""
 Welcome to CodeBench! This tool allows you to compare the performance of Python and C++ implementations 
 of numerical simulations. Upload your code, configure test parameters, and get detailed performance insights.
 
-**Validation System:** Programs are validated against reference outputs in isolated temporary directories. 
-Each program runs independently without file conflicts.
+Each program runs independently in isolated temporary directories to avoid file conflicts.
 </div>
 """, unsafe_allow_html=True)
-
-# Sidebar for configuration management
-with st.sidebar:
-    st.header("📁 Configuration Management")
-    
-    # Save current configuration
-    with st.expander("💾 Save Current Config"):
-        config_name = st.text_input("Configuration Name")
-        if st.button("Save Configuration"):
-            if config_name:
-                # Get current values from session state
-                current_variable_type = st.session_state.get('variable_type', 'Grid Size (N_x/N_y)')
-                current_start_val = st.session_state.get('start_val', 64)
-                current_end_val = st.session_state.get('end_val', 512)
-                current_num_steps = st.session_state.get('num_steps', 5)
-                
-                if save_configuration(config_name, current_variable_type, current_start_val, current_end_val, current_num_steps):
-                    st.success(f"Configuration '{config_name}' saved!")
-                else:
-                    st.error("Failed to save configuration")
-    
-    # Load saved configuration
-    with st.expander("📂 Load Saved Config"):
-        saved_configs = load_configurations()
-        if saved_configs:
-            selected_config = st.selectbox("Select Configuration", list(saved_configs.keys()))
-            if st.button("Load Configuration"):
-                config = saved_configs[selected_config]
-                # Set values in session state for next render
-                for key, value in config.items():
-                    st.session_state[key] = value
-                st.success(f"Configuration '{selected_config}' loaded!")
-                st.rerun()
-        else:
-            st.info("No saved configurations found")
 
 # Main content
 col1, col2 = st.columns(2)
@@ -571,20 +339,6 @@ with col1:
         key="python_text_area"
     )
     st.session_state.python_code = python_code
-    
-    # Validation
-    if st.session_state.python_code:
-        if st.button("🔍 Validate Python Code", key="validate_py"):
-            with st.spinner("Validating Python code..."):
-                success, message = validate_program(st.session_state.python_code, "python", "temp_program.py")
-                st.session_state.validation_results['python'] = (success, message)
-        
-        if 'python' in st.session_state.validation_results:
-            success, message = st.session_state.validation_results['python']
-            if success:
-                st.markdown(f'<div class="success-box">✅ {message}</div>', unsafe_allow_html=True)
-            else:
-                st.markdown(f'<div class="error-box">❌ {message}</div>', unsafe_allow_html=True)
 
 with col2:
     st.markdown('<div class="section-header">⚙️ C++ Program</div>', unsafe_allow_html=True)
@@ -602,75 +356,84 @@ with col2:
         key="cpp_text_area"
     )
     st.session_state.cpp_code = cpp_code
-    
-    # Validation
-    if st.session_state.cpp_code:
-        if st.button("🔍 Validate C++ Code", key="validate_cpp"):
-            with st.spinner("Validating C++ code..."):
-                success, message = validate_program(st.session_state.cpp_code, "cpp", "temp_program.cpp")
-                st.session_state.validation_results['cpp'] = (success, message)
-        
-        if 'cpp' in st.session_state.validation_results:
-            success, message = st.session_state.validation_results['cpp']
-            if success:
-                st.markdown(f'<div class="success-box">✅ {message}</div>', unsafe_allow_html=True)
-            else:
-                st.markdown(f'<div class="error-box">❌ {message}</div>', unsafe_allow_html=True)
 
 # Configuration section
 st.markdown('<div class="section-header">⚙️ Benchmark Configuration</div>', unsafe_allow_html=True)
 
-# First row: Variable type and range
-col1, col2, col3, col4 = st.columns(4)
+# Variable type selection
+variable_type = st.selectbox(
+    "Variable to vary:",
+    ["Grid Size (N_x/N_y)", "Time Steps"],
+    index=0 if st.session_state.get('variable_type', 'Grid Size (N_x/N_y)') == 'Grid Size (N_x/N_y)' else 1,
+    key="variable_type"
+)
 
-with col1:
-    variable_type = st.selectbox(
-        "Variable to vary:",
-        ["Grid Size (N_x/N_y)", "Time Steps"],
-        index=0 if st.session_state.get('variable_type', 'Grid Size (N_x/N_y)') == 'Grid Size (N_x/N_y)' else 1,
-        key="variable_type"
-    )
-
-with col2:
-    if variable_type == "Grid Size (N_x/N_y)":
-        start_val = st.number_input(
-            "Start size:", 
-            min_value=1, 
-            value=st.session_state.get('start_val', 64), 
+# Create layout based on variable type
+if variable_type == "Grid Size (N_x/N_y)":
+    # For Grid Size: only start and end (powers of 2)
+    col1, col2, col3 = st.columns(3)
+    
+    # Available powers of 2 (2^0 to 2^10)
+    powers_of_2 = [2**i for i in range(11)]  # [1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024]
+    
+    with col1:
+        start_val = st.selectbox(
+            "Start size (power of 2):", 
+            options=powers_of_2,
+            index=powers_of_2.index(st.session_state.get('start_val', 64)) if st.session_state.get('start_val', 64) in powers_of_2 else 6,
             key="start_val"
         )
-    else:
+    
+    with col2:
+        # Filter end values to only show powers >= start_val
+        available_end_values = [p for p in powers_of_2 if p >= start_val]
+        default_end = st.session_state.get('end_val', 512)
+        if default_end not in available_end_values:
+            default_end = available_end_values[-1]
+        
+        end_val = st.selectbox(
+            "End size (power of 2):", 
+            options=available_end_values,
+            index=available_end_values.index(default_end) if default_end in available_end_values else -1,
+            key="end_val"
+        )
+    
+    with col3:
+        # Show preview of selected powers
+        selected_powers = get_powers_of_two(start_val, end_val)
+        st.info(f"Test cases: {len(selected_powers)}\nSizes: {selected_powers}")
+    
+    # Set num_steps to None for Grid Size (not used)
+    num_steps = None
+
+else:
+    # For Time Steps: keep the original 3-column layout
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
         start_val = st.number_input(
             "Start steps:", 
             min_value=1, 
             value=st.session_state.get('start_val', 100), 
             key="start_val"
         )
-
-with col3:
-    if variable_type == "Grid Size (N_x/N_y)":
-        end_val = st.number_input(
-            "End size:", 
-            min_value=start_val, 
-            value=max(start_val, st.session_state.get('end_val', 512)), 
-            key="end_val"
-        )
-    else:
+    
+    with col2:
         end_val = st.number_input(
             "End steps:", 
             min_value=start_val, 
             value=max(start_val, st.session_state.get('end_val', 800)), 
             key="end_val"
         )
-
-with col4:
-    num_steps = st.number_input(
-        "Number of test cases:", 
-        min_value=1, 
-        max_value=10, 
-        value=st.session_state.get('num_steps', 5), 
-        key="num_steps"
-    )
+    
+    with col3:
+        num_steps = st.number_input(
+            "Number of test cases:", 
+            min_value=1, 
+            max_value=10, 
+            value=st.session_state.get('num_steps', 5), 
+            key="num_steps"
+        )
 
 # Second row: Physics parameters
 st.markdown("#### Physics Parameters")
@@ -719,7 +482,7 @@ with col4:
 # Preview of inputs.txt
 st.markdown('<div class="section-header">👁️ Preview inputs.txt</div>', unsafe_allow_html=True)
 preview_content = generate_inputs_content(
-    variable_type, start_val, end_val, num_steps, 
+    variable_type, start_val, end_val, num_steps if num_steps is not None else 0, 
     init_type, flow_type, viscosity, end_time
 )
 st.code(preview_content, language="text")
@@ -728,23 +491,17 @@ st.code(preview_content, language="text")
 st.markdown('<div class="section-header">🚀 Run Benchmark</div>', unsafe_allow_html=True)
 
 # Check if everything is ready
-python_valid = 'python' in st.session_state.validation_results and st.session_state.validation_results['python'][0]
-cpp_valid = 'cpp' in st.session_state.validation_results and st.session_state.validation_results['cpp'][0]
 codes_provided = bool(st.session_state.python_code and st.session_state.cpp_code)
 
-ready_to_run = python_valid and cpp_valid and codes_provided
+ready_to_run = codes_provided
 
 if not ready_to_run:
     missing_items = []
     if not st.session_state.python_code:
         missing_items.append("Python code")
-    elif not python_valid:
-        missing_items.append("Valid Python code")
     
     if not st.session_state.cpp_code:
         missing_items.append("C++ code")
-    elif not cpp_valid:
-        missing_items.append("Valid C++ code")
     
     st.warning(f"Please provide: {', '.join(missing_items)}")
 
