@@ -8,6 +8,10 @@ scratch.py
 *.exe
 *.o
 
+# CI/CD specific files
+temp_input*.txt
+bench_input.txt
+
 # OSX
 .DS_Store
 .AppleDouble

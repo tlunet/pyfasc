@@ -172,4 +172,4 @@ fig.colorbar(c1, ax=ax[1], orientation='vertical')
 plt.tight_layout()
 plt.savefig("solution.png")
 
-plt.show()
+# plt.show()
