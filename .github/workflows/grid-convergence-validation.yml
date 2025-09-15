@@ -4,11 +4,21 @@ name: Grid Convergence Validation
 on:
   push:
     branches: [ main, develop ]
+    paths:
+      - 'codes/01_advDiffSolver/program.py'
+      - 'codes/01_advDiffSolver/program.cpp'
+      - 'codes/01_advDiffSolver/validate_grid_convergence*.py'
+      - '.github/workflows/grid-convergence-validation.yml'
   pull_request:
     branches: [ main ]
+    paths:
+      - 'codes/01_advDiffSolver/program.py'
+      - 'codes/01_advDiffSolver/program.cpp'
+      - 'codes/01_advDiffSolver/validate_grid_convergence*.py'
+      - '.github/workflows/grid-convergence-validation.yml'
 
 jobs:
-  validate-grid-convergence:
+  validate-python-grid-convergence:
     runs-on: ubuntu-latest
     
     steps:
@@ -16,22 +26,87 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
     
+    # Check if Python files were modified
+    - name: Check Python changes
+      id: check-python
+      run: |
+        if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+          echo "python_changed=true" >> $GITHUB_OUTPUT
+        else
+          # Check if Python files were modified in the push
+          git diff --name-only HEAD~1 HEAD | grep -E "(program\.py|validate_grid_convergence\.py)" || echo "python_changed=false" >> $GITHUB_OUTPUT
+          git diff --name-only HEAD~1 HEAD | grep -E "(program\.py|validate_grid_convergence\.py)" && echo "python_changed=true" >> $GITHUB_OUTPUT || true
+        fi
+    
     # Set up Python environment
     - name: Set up Python
+      if: steps.check-python.outputs.python_changed == 'true'
       uses: actions/setup-python@v4
       with:
         python-version: '3.9'
     
     # Install dependencies
     - name: Install dependencies
+      if: steps.check-python.outputs.python_changed == 'true'
       run: |
         python -m pip install --upgrade pip
         pip install numpy matplotlib
     
-    # Validate algorithm convergence behavior
-    - name: Validate Grid Convergence
+    # Validate Python algorithm convergence behavior
+    - name: Validate Python Grid Convergence
+      if: steps.check-python.outputs.python_changed == 'true'
       working-directory: codes/01_advDiffSolver
       run: |
-        echo "Starting grid convergence validation..."
+        echo "Starting Python grid convergence validation..."
         python3 validate_grid_convergence.py
-        echo "Grid convergence validation completed successfully!"
+        echo "Python grid convergence validation completed successfully!"
+
+  validate-cpp-grid-convergence:
+    runs-on: ubuntu-latest
+    
+    steps:
+    # Checkout the repository
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    # Check if C++ files were modified
+    - name: Check C++ changes
+      id: check-cpp
+      run: |
+        if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+          echo "cpp_changed=true" >> $GITHUB_OUTPUT
+        else
+          # Check if C++ files were modified in the push
+          git diff --name-only HEAD~1 HEAD | grep -E "(program\.cpp|validate_grid_convergence_cpp\.py)" || echo "cpp_changed=false" >> $GITHUB_OUTPUT
+          git diff --name-only HEAD~1 HEAD | grep -E "(program\.cpp|validate_grid_convergence_cpp\.py)" && echo "cpp_changed=true" >> $GITHUB_OUTPUT || true
+        fi
+    
+    # Set up Python environment (needed for validation script)
+    - name: Set up Python
+      if: steps.check-cpp.outputs.cpp_changed == 'true'
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    
+    # Install Python dependencies
+    - name: Install Python dependencies
+      if: steps.check-cpp.outputs.cpp_changed == 'true'
+      run: |
+        python -m pip install --upgrade pip
+        pip install numpy matplotlib
+    
+    # Install C++ compiler
+    - name: Install C++ compiler
+      if: steps.check-cpp.outputs.cpp_changed == 'true'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y g++ build-essential
+    
+    # Validate C++ algorithm convergence behavior
+    - name: Validate C++ Grid Convergence
+      if: steps.check-cpp.outputs.cpp_changed == 'true'
+      working-directory: codes/01_advDiffSolver
+      run: |
+        echo "Starting C++ grid convergence validation..."
+        python3 validate_grid_convergence_cpp.py
+        echo "C++ grid convergence validation completed successfully!"
