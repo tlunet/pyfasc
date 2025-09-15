@@ -29,6 +29,7 @@ bench_input.txt
 
 # VSCode
 .vscode
+venv
 
 # Pytest and coverage stuff
 .benchmarks
