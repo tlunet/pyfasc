@@ -14,7 +14,7 @@ def updateHalo(u):
     u[sIn, -nHalo:] = u[sIn, nHalo:2*nHalo]
 
 
-cAdv = np.array([ 1./12, 0,  0,    2./3, -1./12])
+cAdv = np.array([ 1./12, -2./3,  0,    2./3, -1./12])
 cDif = np.array([-1./12,  4./3, -5./2, 4./3, -1./12])
 
 class Problem:
