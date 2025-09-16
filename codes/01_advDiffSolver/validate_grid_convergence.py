@@ -3,7 +3,7 @@ import numpy as np
 from program import Problem, nHalo, sIn
 
 def run_simulation(nX, nY):
-    input_content = f"{nX} {nY}\ngauss\ndiagonal 0.0\n0.1 50\n"  # Kürzere Zeit für Stabilität
+    input_content = f"{nX} {nY}\ngauss\ndiagonal 0.0\n0.1 400\n"  # Kürzere Zeit für Stabilität
     with open("temp_input.txt", "w") as f:
         f.write(input_content)
 
@@ -12,7 +12,7 @@ def run_simulation(nX, nY):
     u = p.u[sIn, sIn]
     return np.mean(u)
 
-grid_sizes = [32, 64, 128, 256]  # 512 entfernt wegen numerischer Instabilität
+grid_sizes = [32, 64, 128, 256, 512]
 solutions = [run_simulation(n, n) for n in grid_sizes]
 
 # Robustere Konvergenzprüfung
