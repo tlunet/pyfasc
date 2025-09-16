@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 Grid Convergence Validation for C++ Implementation
 Compiles and runs the C++ program with different grid sizes to validate convergence behavior.
@@ -9,15 +8,37 @@ import os
 import subprocess
 import numpy as np
 import tempfile
+import platform
+import shutil
 
-def compile_cpp_program():
+def compile_cpp_program(cpp_file="program.cpp"):
     """Compile the C++ program"""
     try:
+        # Determine executable name based on platform
+        exe_name = "program_cpp_exec.exe" if platform.system() == "Windows" else "program_cpp_exec"
+        
+        # Check for available C++ compilers
+        if shutil.which("g++"):
+            compiler = "g++"
+        elif shutil.which("clang++"):
+            compiler = "clang++"
+        elif platform.system() == "Windows" and shutil.which("cl"):
+            compiler = "cl"
+        else:
+            print("No C++ compiler found (g++, clang++, or MSVC)")
+            return False
+        
         # Compile with optimization flags for better performance
-        result = subprocess.run([
-            "g++", "-O2", "-std=c++17", 
-            "program.cpp", "-o", "program_cpp_exec"
-        ], capture_output=True, text=True, timeout=60)
+        if compiler in ["g++", "clang++"]:
+            result = subprocess.run([
+                compiler, "-O2", "-std=c++17", 
+                cpp_file, "-o", exe_name
+            ], capture_output=True, text=True, timeout=60)
+        else:  # MSVC
+            result = subprocess.run([
+                compiler, "/O2", "/std:c++17", 
+                cpp_file, "/Fe:" + exe_name
+            ], capture_output=True, text=True, timeout=60)
         
         if result.returncode != 0:
             print(f"Compilation failed: {result.stderr}")
@@ -34,6 +55,9 @@ def run_cpp_simulation(nX, nY):
     """Run C++ simulation with given grid size"""
     input_content = f"{nX} {nY}\ngauss\ndiagonal 0.0\n0.1 50\n"  # Kürzere Zeit für Stabilität
     
+    # Determine executable name based on platform
+    exe_name = "program_cpp_exec.exe" if platform.system() == "Windows" else "./program_cpp_exec"
+    
     # Create temporary input file
     with tempfile.NamedTemporaryFile(mode='w', suffix='.txt', delete=False) as f:
         f.write(input_content)
@@ -45,7 +69,7 @@ def run_cpp_simulation(nX, nY):
         
         # Run the C++ executable
         result = subprocess.run(
-            ["./program_cpp_exec"], 
+            [exe_name], 
             capture_output=True, text=True, timeout=120
         )
         
@@ -89,12 +113,12 @@ def run_cpp_simulation(nX, nY):
         print(f"Error running C++ simulation for grid {nX}x{nY}: {e}")
         return None
 
-def validate_cpp_grid_convergence():
+def validate_cpp_grid_convergence(cpp_file="program.cpp"):
     """Main validation function for C++ implementation"""
     print("Starting C++ Grid Convergence Validation...")
     
     # Compile the C++ program
-    if not compile_cpp_program():
+    if not compile_cpp_program(cpp_file):
         print("C++ Grid Convergence Validation FAILED: Compilation error.")
         return False
     
@@ -154,7 +178,12 @@ def validate_cpp_grid_convergence():
 
 if __name__ == "__main__":
     try:
-        success = validate_cpp_grid_convergence()
+        # Check for command line argument for cpp file
+        cpp_file = "program.cpp"
+        if len(sys.argv) > 1:
+            cpp_file = sys.argv[1]
+        
+        success = validate_cpp_grid_convergence(cpp_file)
         
         # Cleanup executable
         if os.path.exists("program_cpp_exec"):

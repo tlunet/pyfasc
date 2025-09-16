@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 Eigenständige Validierung für CodeBench
 Testet Code ohne UI-Abhängigkeiten
@@ -8,6 +7,8 @@ import tempfile
 import subprocess
 import shutil
 import numpy as np
+import platform
+import sys
 
 def validate_output_format(output_lines):
     """Validiert das Format der Ausgabedateien"""
@@ -42,10 +43,22 @@ def validate_program(code, language, filename):
             with open(code_file, 'w') as f:
                 f.write(code)
             
-            # Kopiere inputs.txt
-            inputs_src = "/Users/yusif/Documents/Uni/CodeBench/inputs.txt"
+            # Kopiere inputs.txt - suche im aktuellen Verzeichnis
+            script_dir = os.path.dirname(os.path.abspath(__file__))
+            parent_dir = os.path.dirname(script_dir)
+            inputs_src = os.path.join(parent_dir, "config", "inputs.txt")
+            
+            # Fallback: suche in verschiedenen möglichen Pfaden
+            if not os.path.exists(inputs_src):
+                inputs_src = os.path.join(script_dir, "inputs.txt")
+            if not os.path.exists(inputs_src):
+                inputs_src = "inputs.txt"
+            if not os.path.exists(inputs_src):
+                inputs_src = os.path.join(os.getcwd(), "config", "inputs.txt")
+            
             inputs_dst = os.path.join(temp_dir, "inputs.txt")
             input_dst = os.path.join(temp_dir, "input.txt")  # Für Python Script
+            
             if os.path.exists(inputs_src):
                 shutil.copy2(inputs_src, inputs_dst)
                 shutil.copy2(inputs_src, input_dst)  # Kopiere auch als input.txt
@@ -58,18 +71,38 @@ def validate_program(code, language, filename):
             
             try:
                 if language == 'python':
-                    python_path = '/Users/yusif/Documents/Uni/CodeBench/.venv/bin/python'
+                    # Use current Python interpreter
+                    python_path = sys.executable
                     result = subprocess.run([python_path, filename], 
                                           capture_output=True, text=True, timeout=30)
                 elif language == 'cpp':
+                    # Determine compiler and executable name
+                    exe_name = "program.exe" if platform.system() == "Windows" else "program"
+                    exe_run = exe_name if platform.system() == "Windows" else "./program"
+                    
+                    # Find available compiler
+                    if shutil.which("g++"):
+                        compiler = "g++"
+                    elif shutil.which("clang++"):
+                        compiler = "clang++"
+                    elif platform.system() == "Windows" and shutil.which("cl"):
+                        compiler = "cl"
+                    else:
+                        return False, "Kein C++ Compiler gefunden"
+                    
                     # Kompiliere C++
-                    compile_result = subprocess.run(['g++', '-o', 'program', filename], 
-                                                  capture_output=True, text=True, timeout=30)
+                    if compiler in ["g++", "clang++"]:
+                        compile_result = subprocess.run([compiler, '-o', exe_name, filename], 
+                                                      capture_output=True, text=True, timeout=30)
+                    else:  # MSVC
+                        compile_result = subprocess.run([compiler, '/Fe:' + exe_name, filename], 
+                                                      capture_output=True, text=True, timeout=30)
+                    
                     if compile_result.returncode != 0:
                         return False, f"Kompilierfehler: {compile_result.stderr}"
                     
                     # Führe aus
-                    result = subprocess.run(['./program'], 
+                    result = subprocess.run([exe_run], 
                                           capture_output=True, text=True, timeout=30)
                 elif language == 'julia':
                     result = subprocess.run(['julia', filename], 
@@ -120,13 +153,16 @@ if __name__ == "__main__":
     with open(code_file, 'r') as f:
         code = f.read()
     
-    filename = f"program.{language}"
-    if language == 'cpp':
-        filename = "program.cpp"
-    elif language == 'julia':
-        filename = "program.jl"
-    elif language == 'python':
-        filename = "program.py"
+    # Use the original filename from the code_file path
+    filename = os.path.basename(code_file)
+    
+    # If filename doesn't have the right extension, add it
+    if language == 'cpp' and not filename.endswith('.cpp'):
+        filename = filename + '.cpp'
+    elif language == 'julia' and not filename.endswith('.jl'):
+        filename = filename + '.jl'
+    elif language == 'python' and not filename.endswith('.py'):
+        filename = filename + '.py'
     
     success, message = validate_program(code, language, filename)
     

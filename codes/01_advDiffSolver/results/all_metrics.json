@@ -1,67 +1,137 @@
 [
   {
-    "input": "64 64\ngauss\ndiagonal 0.0\n1.0 400",
+    "config": "1 1 gauss diagonal 0.0 1 400",
     "python": {
-      "runtime": 0.2747318744659424,
-      "stdout": "tWall : 0.046193838119506836\ntWall/DoF : 2.819448127411306e-08\n",
-      "stderr": ""
+      "runtime": 0.43569374084472656,
+      "stdout": "tWall : 0.12042522430419922\r\ntWall/DoF : 0.00030106306076049805\r\n",
+      "stderr": "",
+      "returncode": 0
     },
     "cpp": {
-      "runtime": 0.1726701259613037,
-      "stdout": "tWall : 0.0260986 seconds\ntWall/DoF : 1.59293e-08 seconds\n",
-      "stderr": ""
+      "runtime": 0.019869089126586914,
+      "stdout": "tWall : 0.0001109 seconds\r\ntWall/DoF : 2.7725e-07 seconds\r\n",
+      "stderr": "",
+      "returncode": 0
     }
   },
   {
-    "input": "176 176\ngauss\ndiagonal 0.0\n1.0 400",
+    "config": "2 2 gauss diagonal 0.0 1 400",
     "python": {
-      "runtime": 0.5509099960327148,
-      "stdout": "tWall : 0.2581198215484619\ntWall/DoF : 2.083224282900164e-08\n",
-      "stderr": ""
+      "runtime": 0.4068870544433594,
+      "stdout": "tWall : 0.07762670516967773\r\ntWall/DoF : 4.8516690731048585e-05\r\n",
+      "stderr": "",
+      "returncode": 0
     },
     "cpp": {
-      "runtime": 0.227586030960083,
-      "stdout": "tWall : 0.202621 seconds\ntWall/DoF : 1.63531e-08 seconds\n",
-      "stderr": ""
+      "runtime": 0.018874645233154297,
+      "stdout": "tWall : 0.0002317 seconds\r\ntWall/DoF : 1.44813e-07 seconds\r\n",
+      "stderr": "",
+      "returncode": 0
     }
   },
   {
-    "input": "288 288\ngauss\ndiagonal 0.0\n1.0 400",
+    "config": "4 4 gauss diagonal 0.0 1 400",
     "python": {
-      "runtime": 0.9909639358520508,
-      "stdout": "tWall : 0.6935269832611084\ntWall/DoF : 2.0903470512065622e-08\n",
-      "stderr": ""
+      "runtime": 0.3948502540588379,
+      "stdout": "tWall : 0.06939530372619629\r\ntWall/DoF : 1.084301620721817e-05\r\n",
+      "stderr": "",
+      "returncode": 0
     },
     "cpp": {
-      "runtime": 0.5837357044219971,
-      "stdout": "tWall : 0.545927 seconds\ntWall/DoF : 1.64547e-08 seconds\n",
-      "stderr": ""
+      "runtime": 0.019171953201293945,
+      "stdout": "tWall : 0.0010779 seconds\r\ntWall/DoF : 1.68422e-07 seconds\r\n",
+      "stderr": "",
+      "returncode": 0
     }
   },
   {
-    "input": "400 400\ngauss\ndiagonal 0.0\n1.0 400",
+    "config": "8 8 gauss diagonal 0.0 1 400",
     "python": {
-      "runtime": 1.66749906539917,
-      "stdout": "tWall : 1.2336442470550537\ntWall/DoF : 1.9275691360235215e-08\n",
-      "stderr": ""
+      "runtime": 0.3901677131652832,
+      "stdout": "tWall : 0.07541942596435547\r\ntWall/DoF : 2.9460713267326357e-06\r\n",
+      "stderr": "",
+      "returncode": 0
     },
     "cpp": {
-      "runtime": 1.0948631763458252,
-      "stdout": "tWall : 1.03822 seconds\ntWall/DoF : 1.62222e-08 seconds\n",
-      "stderr": ""
+      "runtime": 0.024458885192871094,
+      "stdout": "tWall : 0.0041951 seconds\r\ntWall/DoF : 1.63871e-07 seconds\r\n",
+      "stderr": "",
+      "returncode": 0
     }
   },
   {
-    "input": "512 512\ngauss\ndiagonal 0.0\n1.0 400",
+    "config": "16 16 gauss diagonal 0.0 1 400",
     "python": {
-      "runtime": 2.5070300102233887,
-      "stdout": "tWall : 2.0278267860412598\ntWall/DoF : 1.9338863239681814e-08\n",
-      "stderr": ""
+      "runtime": 0.391862154006958,
+      "stdout": "tWall : 0.07969093322753906\r\ntWall/DoF : 7.782317698001862e-07\r\n",
+      "stderr": "",
+      "returncode": 0
     },
     "cpp": {
-      "runtime": 1.8381171226501465,
-      "stdout": "tWall : 1.74662 seconds\ntWall/DoF : 1.66571e-08 seconds\n",
-      "stderr": ""
+      "runtime": 0.03554654121398926,
+      "stdout": "tWall : 0.0134857 seconds\r\ntWall/DoF : 1.31696e-07 seconds\r\n",
+      "stderr": "",
+      "returncode": 0
+    }
+  },
+  {
+    "config": "32 32 gauss diagonal 0.0 1 400",
+    "python": {
+      "runtime": 0.43662095069885254,
+      "stdout": "tWall : 0.1201171875\r\ntWall/DoF : 2.9325485229492187e-07\r\n",
+      "stderr": "",
+      "returncode": 0
+    },
+    "cpp": {
+      "runtime": 0.0810699462890625,
+      "stdout": "tWall : 0.0558699 seconds\r\ntWall/DoF : 1.36401e-07 seconds\r\n",
+      "stderr": "",
+      "returncode": 0
+    }
+  },
+  {
+    "config": "64 64 gauss diagonal 0.0 1 400",
+    "python": {
+      "runtime": 0.5174210071563721,
+      "stdout": "tWall : 0.20964431762695312\r\ntWall/DoF : 1.2795673683285714e-07\r\n",
+      "stderr": "",
+      "returncode": 0
+    },
+    "cpp": {
+      "runtime": 0.2218620777130127,
+      "stdout": "tWall : 0.183888 seconds\r\ntWall/DoF : 1.12236e-07 seconds\r\n",
+      "stderr": "",
+      "returncode": 0
+    }
+  },
+  {
+    "config": "128 128 gauss diagonal 0.0 1 400",
+    "python": {
+      "runtime": 0.9366316795349121,
+      "stdout": "tWall : 0.6170451641082764\r\ntWall/DoF : 9.415362001163885e-08\r\n",
+      "stderr": "",
+      "returncode": 0
+    },
+    "cpp": {
+      "runtime": 0.869537353515625,
+      "stdout": "tWall : 0.783334 seconds\r\ntWall/DoF : 1.19527e-07 seconds\r\n",
+      "stderr": "",
+      "returncode": 0
+    }
+  },
+  {
+    "config": "256 256 gauss diagonal 0.0 1 400",
+    "python": {
+      "runtime": 3.047602653503418,
+      "stdout": "tWall : 2.7229855060577393\r\ntWall/DoF : 1.0387365364294964e-07\r\n",
+      "stderr": "",
+      "returncode": 0
+    },
+    "cpp": {
+      "runtime": 3.8476762771606445,
+      "stdout": "tWall : 3.57656 seconds\r\ntWall/DoF : 1.36435e-07 seconds\r\n",
+      "stderr": "",
+      "returncode": 0
     }
   }
 ]

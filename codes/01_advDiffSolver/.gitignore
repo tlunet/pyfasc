@@ -1,2 +1,40 @@
+# Temporary output files
+outputs/uEnd.txt
+outputs/uInit.txt
 uEnd.txt
 uInit.txt
+
+# Compiled executables
+temp_cpp_exec
+temp_cpp_exec.exe
+program
+program.exe
+*.out
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Temporary files
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Temporary directories
+gif_frames/
+
+# IDE
+.vscode/
+.idea/
+*.sublime-*
+
+# Results (optional - comment out if you want to track results)
+# results/*.png
+# results/*.gif
+# results/*.json
+
+docs/besprechung.txt

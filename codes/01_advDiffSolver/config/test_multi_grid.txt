@@ -12,13 +12,3 @@ diagonal 0.0
 gauss
 diagonal 0.0
 1 400
-
-512 512
-gauss
-diagonal 0.0
-1 400
-
-1024 1024
-gauss
-diagonal 0.0
-1 400

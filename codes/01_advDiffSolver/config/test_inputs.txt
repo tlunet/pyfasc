@@ -1,0 +1,24 @@
+16 16
+gauss
+diagonal 0.0
+1 400
+
+32 32
+gauss
+diagonal 0.0
+1 400
+
+64 64
+gauss
+diagonal 0.0
+1 400
+
+128 128
+gauss
+diagonal 0.0
+1 400
+
+256 256
+gauss
+diagonal 0.0
+1 400

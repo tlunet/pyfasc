@@ -1,8 +1,10 @@
-#!/usr/bin/env python3
+
 # -*- coding: utf-8 -*-
 import numpy as np
 from time import time
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
+import os
+import sys
 
 nHalo = 2
 sIn = slice(nHalo, -nHalo)
@@ -150,26 +152,42 @@ p = Problem("input.txt")
 u0 = p.u.copy()
 
 p.simulate()
-uEnd = np.abs(p.u)  # remove some negative artefacts for plots
+# uEnd = np.abs(p.u)  # remove some negative artefacts for plots
 
-# Plotting
-fig, ax = plt.subplots(1, 2, figsize=(12, 5))
+# # Plotting
+# fig, ax = plt.subplots(1, 2, figsize=(12, 5))
 
-grid = [x.ravel() for x in p.grid]
+# grid = [x.ravel() for x in p.grid]
 
-c0 = ax[0].contourf(*grid, u0[sIn, sIn])
-ax[0].set_title('T=0')
-ax[0].set_xlabel('X')
-ax[0].set_ylabel('Y')
-fig.colorbar(c0, ax=ax[0], orientation='vertical')
+# # Use consistent color scale across all grid sizes for better comparison
+# vmin, vmax = 0, 1  # Adjust these values based on your typical data range
 
-c1 = ax[1].contourf(*grid, uEnd[sIn, sIn])
-ax[1].set_title(f'T={p.tEnd}')
-ax[1].set_xlabel('X')
-ax[1].set_ylabel('Y')
-fig.colorbar(c1, ax=ax[1], orientation='vertical')
+# c0 = ax[0].contourf(*grid, u0[sIn, sIn], levels=20, vmin=vmin, vmax=vmax, cmap='viridis')
+# ax[0].set_title(f'T=0 (Grid: {p.nX}x{p.nY})')
+# ax[0].set_xlabel('X')
+# ax[0].set_ylabel('Y')
+# ax[0].set_aspect('equal')
+# fig.colorbar(c0, ax=ax[0], orientation='vertical')
 
-plt.tight_layout()
-plt.savefig("solution.png")
+# c1 = ax[1].contourf(*grid, uEnd[sIn, sIn], levels=20, vmin=vmin, vmax=vmax, cmap='viridis')
+# ax[1].set_title(f'T={p.tEnd} (Grid: {p.nX}x{p.nY})')
+# ax[1].set_xlabel('X')
+# ax[1].set_ylabel('Y')
+# ax[1].set_aspect('equal')
+# fig.colorbar(c1, ax=ax[1], orientation='vertical')
+
+# plt.tight_layout()
+
+# # Save both the regular solution and a frame for GIF animation
+# os.makedirs("../results", exist_ok=True)
+# plt.savefig("../results/solution.png", dpi=150, bbox_inches='tight')
+
+# # Save individual frame for GIF with grid size in filename
+# gif_dir = "gif_frames"
+# os.makedirs(gif_dir, exist_ok=True)
+# gif_filename = os.path.join(gif_dir, f"frame_{p.nX:04d}x{p.nY:04d}.png")
+# plt.savefig(gif_filename, dpi=100, bbox_inches='tight')
+
+# plt.close()  # Close figure to save memory
 
 # plt.show()
