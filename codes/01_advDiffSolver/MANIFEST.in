@@ -3,9 +3,7 @@
 
 # Include documentation
 include README.md
-include ARCHITECTURE.md
 include LICENSE
-include USAGE.md
 
 # Include configuration files
 include config/*.txt

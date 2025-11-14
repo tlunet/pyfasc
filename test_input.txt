@@ -1,4 +1,0 @@
-64 64
-gauss
-diagonal 0.0
-1 400
