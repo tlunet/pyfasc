@@ -6,26 +6,12 @@ import sys
 import json
 
 from adapters.registry import get_registry
-from adapters.utils import safe_print, configure_windows_console
+from utils.console_utils import safe_print, configure_windows_console
 
 # Configure Windows console for UTF-8
 configure_windows_console()
 
-def safe_print(text):
-    """Print text safely, handling encoding issues on Windows."""
-    try:
-        print(text)
-    except (UnicodeEncodeError, UnicodeError):
-        # Remove emojis and special characters if encoding fails
-        import re
-        # Remove emojis (Unicode range U+1F300 to U+1F9FF)
-        text_no_emoji = re.sub(r'[\U0001F300-\U0001F9FF]+', '', text)
-        print(text_no_emoji)
-
 def read_config_blocks(filename):
-    """Reads multiple configuration blocks from a file, separated by double newlines.
-    Filters out comment lines starting with #.
-    Returns a list of config blocks as strings."""
     with open(filename, "r") as f:
         content = f.read()
     
@@ -48,19 +34,7 @@ def read_config_blocks(filename):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="General-purpose benchmark tool for Python, C++, and Julia programs",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""
-The config file can contain multiple parameter sets separated by double newlines.
-Each program will be executed once per parameter set, and runtimes will be compared.
-
-Example config file:
-    param1 value1
-    param2 value2
-
-    param1 value3
-    param2 value4
-        """
+        description="General-purpose benchmark tool for Python, C++, and Julia programs"
     )
     parser.add_argument("--py", nargs='+', help="Python script path(s)")
     parser.add_argument("--cpp", nargs='+', help="C++ source path(s)")
@@ -175,6 +149,9 @@ Example config file:
                 print(f"stderr: {metrics['stderr'][:200]}")
             
             print(f"{adapter.display_name} runtime: {metrics['runtime']:.4f}s")
+            if 'compilation_time' in metrics and metrics['compilation_time'] > 0:
+                print(f"{adapter.display_name} compilation time: {metrics['compilation_time']:.4f}s")
+            print(f"{adapter.display_name} total time: {metrics.get('total_time', metrics['runtime']):.4f}s")
         
         # Calculate speedup (first vs second program)
         if len(programs) >= 2:

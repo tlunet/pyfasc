@@ -1,25 +1,19 @@
 import streamlit as st
-import subprocess
 import os
-import sys
 import tempfile
 import json
 import shutil
-import pandas as pd
-import plotly.graph_objects as go
-from plotly.subplots import make_subplots
-import zipfile
-import io
-import glob
-from PIL import Image
-import re
 
-# Import the language registry
-from adapters.registry import get_registry
+# Import utility functions
+from utils.file_utils import detect_language
+from utils.session_utils import init_session_state
+from utils.benchmark_utils import run_benchmark
+from utils.results_utils import calculate_summary_metrics
+from utils.ui_utils import load_custom_css, get_language_emoji
 
 # Import plot and table creation functions
 from scripts.create_bar_chart import create_bar_chart
-from scripts.create_loglog_chart import create_loglog_chart
+from scripts.create_loglog_chart import create_loglog_chart, create_loglog_chart_total
 from scripts.create_results_table import create_results_table
 from scripts.create_csv_data import create_csv_data
 from scripts.create_download_package import create_download_package
@@ -31,167 +25,10 @@ st.set_page_config(
     layout="centered"
 )
 
-# Custom CSS for better styling
-st.markdown("""
-<style>
-    /* Limit main container width */
-    .main .block-container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding-left: 2rem;
-        padding-right: 2rem;
-    }
-    
-    /* Custom styling */
-    .main-header {
-        font-size: 3rem;
-        font-weight: bold;
-        text-align: center;
-        color: #1f77b4;
-        margin-bottom: 2rem;
-    }
-    .section-header {
-        font-size: 1.5rem;
-        font-weight: bold;
-        color: #2c3e50;
-        margin-top: 2rem;
-        margin-bottom: 1rem;
-    }
-    .success-box {
-        padding: 1rem;
-        border-radius: 0.5rem;
-        background-color: #d4edda;
-        border: 1px solid #c3e6cb;
-        color: #155724;
-        margin: 1rem 0;
-    }
-    .error-box {
-        padding: 1rem;
-        border-radius: 0.5rem;
-        background-color: #f8d7da;
-        border: 1px solid #f5c6cb;
-        color: #721c24;
-        margin: 1rem 0;
-    }
-    .info-box {
-        padding: 1rem;
-        border-radius: 0.5rem;
-        background-color: #d1ecf1;
-        border: 1px solid #bee5eb;
-        color: #0c5460;
-        margin: 1rem 0;
-    }
-</style>
-""", unsafe_allow_html=True)
+load_custom_css()
 
 # Initialize session state
-if 'program1_code' not in st.session_state:
-    st.session_state.program1_code = ""
-if 'program1_filename' not in st.session_state:
-    st.session_state.program1_filename = ""
-if 'program1_language' not in st.session_state:
-    st.session_state.program1_language = ""
-    
-if 'program2_code' not in st.session_state:
-    st.session_state.program2_code = ""
-if 'program2_filename' not in st.session_state:
-    st.session_state.program2_filename = ""
-if 'program2_language' not in st.session_state:
-    st.session_state.program2_language = ""
-    
-if 'config_content' not in st.session_state:
-    st.session_state.config_content = ""
-if 'benchmark_results' not in st.session_state:
-    st.session_state.benchmark_results = None
-
-# Get the language registry
-registry = get_registry()
-
-def detect_language(filename):
-    """Detect programming language from file extension using registry"""
-    return registry.detect_language(filename) or 'unknown'
-
-def run_benchmark(program1_file, program1_lang, program2_file, program2_lang, config_file):
-    """Run the benchmark using diagnosetool.py with the new adapter architecture"""
-    try:
-        # Build command based on languages
-        cmd = [sys.executable, 'diagnosetool.py']
-        
-        # Map language names to command-line flags
-        lang_flag_map = {
-            'python': '--py',
-            'cpp': '--cpp',
-            'julia': '--jl'
-        }
-        
-        # Add program 1
-        flag1 = lang_flag_map.get(program1_lang)
-        if flag1:
-            cmd.extend([flag1, program1_file])
-        else:
-            return False, f"Unsupported language: {program1_lang}"
-        
-        # Add program 2
-        flag2 = lang_flag_map.get(program2_lang)
-        if flag2:
-            cmd.extend([flag2, program2_file])
-        else:
-            return False, f"Unsupported language: {program2_lang}"
-        
-        # Add config
-        cmd.extend(['--config', config_file])
-        
-        # Add config
-        cmd.extend(['--config', config_file])
-        
-        result = subprocess.run(
-            cmd,
-            capture_output=True,
-            text=True,
-            cwd=os.getcwd()
-        )
-        
-        if result.returncode != 0:
-            return False, f"Benchmark failed: {result.stderr}"
-        
-        # Load results
-        try:
-            with open('results/all_metrics.json', 'r') as f:
-                raw_results = json.load(f)
-            
-            # Convert to expected format
-            formatted_results = {
-                'test_cases': {},
-                'languages': {
-                    'program1': program1_lang,
-                    'program2': program2_lang
-                }
-            }
-            
-            for i, test_case in enumerate(raw_results):
-                case_name = f"Test Case {i+1}"
-                
-                # Extract config preview (first line or truncated)
-                config_preview = test_case.get('config', '')[:50]
-                
-                formatted_results['test_cases'][case_name] = {
-                    'config': test_case.get('config', ''),
-                    'program1': {
-                        'runtime': test_case.get(program1_lang, {}).get('runtime', 0),
-                        'returncode': test_case.get(program1_lang, {}).get('returncode', 0)
-                    },
-                    'program2': {
-                        'runtime': test_case.get(program2_lang, {}).get('runtime', 0),
-                        'returncode': test_case.get(program2_lang, {}).get('returncode', 0)
-                    }
-                }
-            
-            return True, formatted_results
-        except Exception as e:
-            return False, f"Could not load results: {e}"
-            
-    except Exception as e:
-        return False, f"Error running benchmark: {e}"
+init_session_state()
 
 # Main UI
 st.markdown('<div class="main-header">⚡ CodeBench Performance Analyzer</div>', unsafe_allow_html=True)
@@ -216,10 +53,10 @@ with col1:
         st.session_state.program1_code = uploaded_prog1_file.read().decode('utf-8')
         st.session_state.program1_filename = uploaded_prog1_file.name
         st.session_state.program1_language = detect_language(uploaded_prog1_file.name)
-        lang_emoji = {"python": "🐍", "cpp": "⚙️", "julia": "🔬"}.get(st.session_state.program1_language, "📄")
+        lang_emoji = get_language_emoji(st.session_state.program1_language)
         st.success(f"✅ {lang_emoji} {uploaded_prog1_file.name}")
     elif 'program1_code' in st.session_state and st.session_state.program1_code:
-        lang_emoji = {"python": "🐍", "cpp": "⚙️", "julia": "🔬"}.get(st.session_state.program1_language, "📄")
+        lang_emoji = get_language_emoji(st.session_state.program1_language)
         st.info(f"{lang_emoji} {st.session_state.get('program1_filename', 'file')} loaded")
 
 with col2:
@@ -229,10 +66,10 @@ with col2:
         st.session_state.program2_code = uploaded_prog2_file.read().decode('utf-8')
         st.session_state.program2_filename = uploaded_prog2_file.name
         st.session_state.program2_language = detect_language(uploaded_prog2_file.name)
-        lang_emoji = {"python": "🐍", "cpp": "⚙️", "julia": "🔬"}.get(st.session_state.program2_language, "📄")
+        lang_emoji = get_language_emoji(st.session_state.program2_language)
         st.success(f"✅ {lang_emoji} {uploaded_prog2_file.name}")
     elif 'program2_code' in st.session_state and st.session_state.program2_code:
-        lang_emoji = {"python": "🐍", "cpp": "⚙️", "julia": "🔬"}.get(st.session_state.program2_language, "📄")
+        lang_emoji = get_language_emoji(st.session_state.program2_language)
         st.info(f"{lang_emoji} {st.session_state.get('program2_filename', 'file')} loaded")
 
 with col3:
@@ -253,7 +90,8 @@ if st.session_state.get('program1_code') or st.session_state.get('program2_code'
         with preview_tab1:
             if st.session_state.get('program1_code'):
                 lang = st.session_state.get('program1_language', 'text')
-                lang_display = {"python": "python", "cpp": "cpp", "julia": "julia"}.get(lang, "text")
+                from utils.ui_utils import get_language_display_name
+                lang_display = get_language_display_name(lang)
                 st.code(st.session_state.program1_code[:1000] + ("..." if len(st.session_state.program1_code) > 1000 else ""), language=lang_display)
             else:
                 st.info("No program 1 uploaded yet")
@@ -261,7 +99,8 @@ if st.session_state.get('program1_code') or st.session_state.get('program2_code'
         with preview_tab2:
             if st.session_state.get('program2_code'):
                 lang = st.session_state.get('program2_language', 'text')
-                lang_display = {"python": "python", "cpp": "cpp", "julia": "julia"}.get(lang, "text")
+                from utils.ui_utils import get_language_display_name
+                lang_display = get_language_display_name(lang)
                 st.code(st.session_state.program2_code[:1000] + ("..." if len(st.session_state.program2_code) > 1000 else ""), language=lang_display)
             else:
                 st.info("No program 2 uploaded yet")
@@ -336,6 +175,10 @@ if run_button and files_provided:
                 # Copy diagnosetool.py
                 shutil.copy(os.path.join(original_cwd, 'tests', 'diagnosetool.py'), '.')
                 
+                # Copy utils and adapters directories (needed by diagnosetool.py)
+                shutil.copytree(os.path.join(original_cwd, 'utils'), 'utils')
+                shutil.copytree(os.path.join(original_cwd, 'adapters'), 'adapters')
+                
                 success, results = run_benchmark(
                     prog1_filename, 
                     st.session_state.program1_language,
@@ -380,29 +223,44 @@ if st.session_state.benchmark_results:
     col1, col2, col3, col4 = st.columns(4)
     
     if 'test_cases' in results:
-        test_cases = results['test_cases']
-        prog1_times = [case['program1']['runtime'] for case in test_cases.values()]
-        prog2_times = [case['program2']['runtime'] for case in test_cases.values()]
+        # Calculate metrics using utility function
+        metrics = calculate_summary_metrics(results)
         
-        avg_speedup = sum(p1/p2 for p1, p2 in zip(prog1_times, prog2_times) if p2 > 0) / len(prog1_times)
-        max_speedup = max((p1/p2 for p1, p2 in zip(prog1_times, prog2_times) if p2 > 0), default=0)
-        
-        with col1:
-            st.metric("Test Cases", len(test_cases))
-        with col2:
-            st.metric(f"Avg {lang1.title()} Time", f"{sum(prog1_times)/len(prog1_times):.3f}s")
-        with col3:
-            st.metric(f"Avg {lang2.title()} Time", f"{sum(prog2_times)/len(prog2_times):.3f}s")
-        with col4:
-            st.metric("Avg Speedup", f"{avg_speedup:.2f}x")
+        if metrics:
+            with col1:
+                st.metric("Test Cases", metrics['num_test_cases'])
+            with col2:
+                st.metric(f"Avg {lang1.title()} Time", f"{metrics['prog1_avg_runtime']:.3f}s")
+            with col3:
+                st.metric(f"Avg {lang2.title()} Time", f"{metrics['prog2_avg_runtime']:.3f}s")
+            with col4:
+                st.metric("Avg Speedup", f"{metrics['avg_speedup']:.2f}x")
+            
+            # Additional metrics row for total time
+            st.markdown("**Total Time (including compilation):**")
+            col1, col2, col3 = st.columns(3)
+            
+            with col1:
+                st.metric(f"Avg {lang1.title()} Total", f"{metrics['prog1_avg_total']:.3f}s")
+            with col2:
+                st.metric(f"Avg {lang2.title()} Total", f"{metrics['prog2_avg_total']:.3f}s")
+            with col3:
+                st.metric("Avg Total Speedup", f"{metrics['avg_total_speedup']:.2f}x")
     
     # Performance plots
     line_chart_path = create_loglog_chart(results)
+    line_chart_total_path = create_loglog_chart_total(results)
     bar_fig = create_bar_chart(results)
     
     if line_chart_path and os.path.exists(line_chart_path):
-        st.markdown("### 📈 Runtime Trend (Log-Log Line Chart)")
-        st.image(line_chart_path, use_column_width=True, caption="Runtime comparison with logarithmic scales on both axes")
+        st.markdown("### 📈 Execution Time Comparison (Log-Log)")
+        st.image(line_chart_path, use_column_width=True, 
+                caption="Execution time only (compilation excluded) - logarithmic scales on both axes")
+    
+    if line_chart_total_path and os.path.exists(line_chart_total_path):
+        st.markdown("### 📈 Total Time Comparison (Log-Log)")
+        st.image(line_chart_total_path, use_column_width=True, 
+                caption="Total time including compilation - logarithmic scales on both axes")
     
     if bar_fig:
         st.markdown("### 📊 Runtime Comparison (Bar Chart)")

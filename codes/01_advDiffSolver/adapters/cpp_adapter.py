@@ -8,6 +8,7 @@ import os
 import platform
 import shutil
 import subprocess
+import time
 from typing import List, Tuple
 from .base_adapter import LanguageAdapter
 
@@ -94,12 +95,20 @@ class CppAdapter(LanguageAdapter):
             
             print(f"Compiling with: {' '.join(compile_cmd)}")
             
+            # Measure compilation time
+            compile_start = time.time()
+            
             # Compile
             result = subprocess.run(
                 compile_cmd,
                 capture_output=True,
                 text=True
             )
+            
+            compile_end = time.time()
+            self.compilation_time = compile_end - compile_start
+            
+            print(f"Compilation took {self.compilation_time:.3f}s")
             
             if result.returncode != 0:
                 return False, "", f"Compilation failed: {result.stderr}"

@@ -28,6 +28,7 @@ class LanguageAdapter(ABC):
         self.requires_compilation: bool = False
         self.display_name: str = ""
         self.emoji: str = "📄"
+        self.compilation_time: float = 0.0  # Track compilation time
     
     @abstractmethod
     def prepare(self, source_file: str) -> Tuple[bool, str, str]:
@@ -66,7 +67,7 @@ class LanguageAdapter(ABC):
             config_files: List of config file names to write to
             
         Returns:
-            Dictionary with runtime, stdout, stderr, and returncode
+            Dictionary with runtime, total_time, stdout, stderr, and returncode
         """
         if config_files is None:
             config_files = ["config.txt", "input.txt"]
@@ -85,8 +86,13 @@ class LanguageAdapter(ABC):
         stdout, stderr = proc.communicate()
         end = time.time()
         
+        execution_time = end - start
+        total_time = self.compilation_time + execution_time
+        
         return {
-            "runtime": end - start,
+            "runtime": execution_time,
+            "total_time": total_time,
+            "compilation_time": self.compilation_time,
             "stdout": stdout.decode(),
             "stderr": stderr.decode(),
             "returncode": proc.returncode
