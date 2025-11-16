@@ -41,5 +41,6 @@ for nu in [0, 0.001]:   # try two diffusion coefficients
 
     print("Convergence order :")
     for nX, order in conv.items():
-        print(f" -- grid {nX} : {order}")
+        err1, err2 = errors[nX//2], errors[nX]
+        print(f" -- grid {nX} : {order} ({err1:1.2e} -> {err2:1.2e})")
         assert abs(order-4) < 0.3, f"numerical order ({order}) to different from theoretical order (4)"
