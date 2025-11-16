@@ -146,12 +146,12 @@ class Problem:
         print(f"tWall : {tWall}")
         print(f"tWall/DoF : {tWall/(self.nSteps*nX*nY)}")
 
+if __name__ == "__main__":
+    # Simulation
+    p = Problem("input.txt")
+    u0 = p.u.copy()
 
-# Simulation
-p = Problem("input.txt")
-u0 = p.u.copy()
-
-p.simulate()
+    p.simulate()
 # uEnd = np.abs(p.u)  # remove some negative artefacts for plots
 
 # # Plotting
