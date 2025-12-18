@@ -2,172 +2,118 @@
   {
     "config": "1 1 gauss diagonal 0.0 1 400",
     "python": {
-      "runtime": 0.27928733825683594,
-      "total_time": 0.27928733825683594,
-      "compilation_time": 0.0,
-      "stdout": "tWall : 0.0662846565246582\r\ntWall/DoF : 0.0001657116413116455\r\n",
-      "stderr": "",
-      "returncode": 0
+      "runtime": 0.2969851493835449,
+      "total_time": 0.2969851493835449,
+      "compilation_time": 0.0
     },
     "cpp": {
-      "runtime": 0.005056858062744141,
-      "total_time": 1.3288850784301758,
-      "compilation_time": 1.3238282203674316,
-      "stdout": "tWall : 0.0001179 seconds\r\ntWall/DoF : 2.9475e-07 seconds\r\n",
-      "stderr": "",
-      "returncode": 0
+      "runtime": 0.013615846633911133,
+      "total_time": 1.2852914333343506,
+      "compilation_time": 1.2716755867004395
     }
   },
   {
     "config": "2 2 gauss diagonal 0.0 1 400",
     "python": {
-      "runtime": 0.24479222297668457,
-      "total_time": 0.24479222297668457,
-      "compilation_time": 0.0,
-      "stdout": "tWall : 0.0498046875\r\ntWall/DoF : 3.11279296875e-05\r\n",
-      "stderr": "",
-      "returncode": 0
+      "runtime": 0.23671746253967285,
+      "total_time": 0.23671746253967285,
+      "compilation_time": 0.0
     },
     "cpp": {
-      "runtime": 0.01913166046142578,
-      "total_time": 1.3429598808288574,
-      "compilation_time": 1.3238282203674316,
-      "stdout": "tWall : 0.0002089 seconds\r\ntWall/DoF : 1.30563e-07 seconds\r\n",
-      "stderr": "",
-      "returncode": 0
+      "runtime": 0.01659226417541504,
+      "total_time": 1.2882678508758545,
+      "compilation_time": 1.2716755867004395
     }
   },
   {
     "config": "4 4 gauss diagonal 0.0 1 400",
     "python": {
-      "runtime": 0.264437198638916,
-      "total_time": 0.264437198638916,
-      "compilation_time": 0.0,
-      "stdout": "tWall : 0.0675954818725586\r\ntWall/DoF : 1.056179404258728e-05\r\n",
-      "stderr": "",
-      "returncode": 0
+      "runtime": 0.3136110305786133,
+      "total_time": 0.3136110305786133,
+      "compilation_time": 0.0
     },
     "cpp": {
-      "runtime": 0.016532182693481445,
-      "total_time": 1.340360403060913,
-      "compilation_time": 1.3238282203674316,
-      "stdout": "tWall : 0.000615 seconds\r\ntWall/DoF : 9.60937e-08 seconds\r\n",
-      "stderr": "",
-      "returncode": 0
+      "runtime": 0.01288294792175293,
+      "total_time": 1.2845585346221924,
+      "compilation_time": 1.2716755867004395
     }
   },
   {
     "config": "8 8 gauss diagonal 0.0 1 400",
     "python": {
-      "runtime": 0.24860572814941406,
-      "total_time": 0.24860572814941406,
-      "compilation_time": 0.0,
-      "stdout": "tWall : 0.04984426498413086\r\ntWall/DoF : 1.9470416009426116e-06\r\n",
-      "stderr": "",
-      "returncode": 0
+      "runtime": 0.25255751609802246,
+      "total_time": 0.25255751609802246,
+      "compilation_time": 0.0
     },
     "cpp": {
-      "runtime": 0.016169071197509766,
-      "total_time": 1.3399972915649414,
-      "compilation_time": 1.3238282203674316,
-      "stdout": "tWall : 0.0024449 seconds\r\ntWall/DoF : 9.55039e-08 seconds\r\n",
-      "stderr": "",
-      "returncode": 0
+      "runtime": 0.016478776931762695,
+      "total_time": 1.2881543636322021,
+      "compilation_time": 1.2716755867004395
     }
   },
   {
     "config": "16 16 gauss diagonal 0.0 1 400",
     "python": {
-      "runtime": 0.2499227523803711,
-      "total_time": 0.2499227523803711,
-      "compilation_time": 0.0,
-      "stdout": "tWall : 0.04969191551208496\r\ntWall/DoF : 4.852726124227047e-07\r\n",
-      "stderr": "",
-      "returncode": 0
+      "runtime": 0.2614123821258545,
+      "total_time": 0.2614123821258545,
+      "compilation_time": 0.0
     },
     "cpp": {
-      "runtime": 0.026704788208007812,
-      "total_time": 1.3505330085754395,
-      "compilation_time": 1.3238282203674316,
-      "stdout": "tWall : 0.0070079 seconds\r\ntWall/DoF : 6.84365e-08 seconds\r\n",
-      "stderr": "",
-      "returncode": 0
+      "runtime": 0.020772933959960938,
+      "total_time": 1.2924485206604004,
+      "compilation_time": 1.2716755867004395
     }
   },
   {
     "config": "32 32 gauss diagonal 0.0 1 400",
     "python": {
-      "runtime": 0.2563638687133789,
-      "total_time": 0.2563638687133789,
-      "compilation_time": 0.0,
-      "stdout": "tWall : 0.0662527084350586\r\ntWall/DoF : 1.6174977645277978e-07\r\n",
-      "stderr": "",
-      "returncode": 0
+      "runtime": 0.2751178741455078,
+      "total_time": 0.2751178741455078,
+      "compilation_time": 0.0
     },
     "cpp": {
-      "runtime": 0.05035042762756348,
-      "total_time": 1.3741786479949951,
-      "compilation_time": 1.3238282203674316,
-      "stdout": "tWall : 0.0269844 seconds\r\ntWall/DoF : 6.58799e-08 seconds\r\n",
-      "stderr": "",
-      "returncode": 0
+      "runtime": 0.04015350341796875,
+      "total_time": 1.3118290901184082,
+      "compilation_time": 1.2716755867004395
     }
   },
   {
     "config": "64 64 gauss diagonal 0.0 1 400",
     "python": {
-      "runtime": 0.31607842445373535,
-      "total_time": 0.31607842445373535,
-      "compilation_time": 0.0,
-      "stdout": "tWall : 0.11621546745300293\r\ntWall/DoF : 7.093229214660824e-08\r\n",
-      "stderr": "",
-      "returncode": 0
+      "runtime": 0.337139368057251,
+      "total_time": 0.337139368057251,
+      "compilation_time": 0.0
     },
     "cpp": {
-      "runtime": 0.13364839553833008,
-      "total_time": 1.4574766159057617,
-      "compilation_time": 1.3238282203674316,
-      "stdout": "tWall : 0.108059 seconds\r\ntWall/DoF : 6.59539e-08 seconds\r\n",
-      "stderr": "",
-      "returncode": 0
+      "runtime": 0.13152694702148438,
+      "total_time": 1.4032025337219238,
+      "compilation_time": 1.2716755867004395
     }
   },
   {
     "config": "128 128 gauss diagonal 0.0 1 400",
     "python": {
-      "runtime": 0.532721757888794,
-      "total_time": 0.532721757888794,
-      "compilation_time": 0.0,
-      "stdout": "tWall : 0.33283329010009766\r\ntWall/DoF : 5.07863296661526e-08\r\n",
-      "stderr": "",
-      "returncode": 0
+      "runtime": 0.5795133113861084,
+      "total_time": 0.5795133113861084,
+      "compilation_time": 0.0
     },
     "cpp": {
-      "runtime": 0.5516631603240967,
-      "total_time": 1.8754913806915283,
-      "compilation_time": 1.3238282203674316,
-      "stdout": "tWall : 0.494149 seconds\r\ntWall/DoF : 7.54012e-08 seconds\r\n",
-      "stderr": "",
-      "returncode": 0
+      "runtime": 0.5326981544494629,
+      "total_time": 1.8043737411499023,
+      "compilation_time": 1.2716755867004395
     }
   },
   {
     "config": "256 256 gauss diagonal 0.0 1 400",
     "python": {
-      "runtime": 1.6468281745910645,
-      "total_time": 1.6468281745910645,
-      "compilation_time": 0.0,
-      "stdout": "tWall : 1.4377262592315674\r\ntWall/DoF : 5.48449042980792e-08\r\n",
-      "stderr": "",
-      "returncode": 0
+      "runtime": 1.9293887615203857,
+      "total_time": 1.9293887615203857,
+      "compilation_time": 0.0
     },
     "cpp": {
-      "runtime": 2.1819825172424316,
-      "total_time": 3.5058107376098633,
-      "compilation_time": 1.3238282203674316,
-      "stdout": "tWall : 2.03263 seconds\r\ntWall/DoF : 7.75386e-08 seconds\r\n",
-      "stderr": "",
-      "returncode": 0
+      "runtime": 2.3632938861846924,
+      "total_time": 3.634969472885132,
+      "compilation_time": 1.2716755867004395
     }
   }
 ]

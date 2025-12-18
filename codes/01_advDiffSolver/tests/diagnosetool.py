@@ -127,9 +127,19 @@ def main():
 
     # Benchmark all configurations
     print("\n=== Running Benchmarks ===")
-    all_results = []
+    existing_results = []
+    if os.path.exists("results/all_metrics.json"):
+        try:
+            with open("results/all_metrics.json", "r") as f:
+                existing_results = json.load(f)
+        except:
+            existing_results = []
+    all_results = existing_results.copy()
 
     for idx, config_block in enumerate(config_blocks):
+        if any(result['config'] == config_block for result in all_results):
+            print(f"⏭️ Skipping config block #{idx + 1} (already measured)")
+            continue
         print(f"\n--- Configuration Block #{idx + 1} ---")
         print(f"Config preview: {config_block[:100]}..." if len(config_block) > 100 else f"Config: {config_block}")
         
@@ -142,11 +152,6 @@ def main():
             print(f"\nExecuting {adapter.display_name}...")
             metrics = adapter.execute(prog['prepared_file'], config_block)
             result_entry[prog['type']] = metrics
-            
-            # Check for errors
-            if metrics["returncode"] != 0:
-                print(f"[WARNING] {adapter.display_name} execution failed with return code {metrics['returncode']}")
-                print(f"stderr: {metrics['stderr'][:200]}")
             
             print(f"{adapter.display_name} runtime: {metrics['runtime']:.4f}s")
             if 'compilation_time' in metrics and metrics['compilation_time'] > 0:

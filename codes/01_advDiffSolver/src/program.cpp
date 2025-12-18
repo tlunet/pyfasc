@@ -85,7 +85,7 @@ public:
         if (initType == "gauss") {
             for (int y = 0; y < nY; y++)
             for (int x = 0; x < nX; x++) {
-                value(x, y) = std::exp(-200*(std::pow(x*dX-0.25, 2) + std::pow(y*dY-0.25, 2)));
+                value(x, y) = std::exp(-200*(std::pow(x*dX-0.5, 2) + std::pow(y*dY-0.5, 2)));
             }
 
         } else if (initType == "sinus") {
@@ -295,6 +295,9 @@ public:
             u0 = u1;
             t = (i+1)*dt;
         }
+        // Copy result back to this->u
+        *this->u = u0;
+        
         auto tEnd = std::chrono::high_resolution_clock::now();
         std::chrono::duration<double> duration = tEnd-tBeg;
         std::cout << "tWall : " << duration.count() << " seconds" << std::endl;

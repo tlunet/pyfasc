@@ -94,18 +94,18 @@ src/
 
 ## ⚙️ Konfigurierbare Parameter
 
-In `grid_convergence_validator.py`:
+In `run_validation.py` und den Helper-Scripts:
 
 ```python
-# Test-Gitter (kann angepasst werden)
-test_grids = [8, 16, 32, 64]
+# Test-Gittergrößen (in run_*_multi_grids.py)
+grid_sizes = [256, 128, 64]
 
-# Konvergenzordnung Schwellenwerte
-expected_min_order = 1.0  # Minimum akzeptable Ordnung
-expected_max_order = 4.0  # Maximum plausible Ordnung
+# Test-Zeitschritte (in run_*_multi_steps.py)
+time_steps = [16, 32, 64]
 
-# Timeout für Programm-Ausführung
-timeout=60  # Sekunden
+# Toleranzen für Vergleiche (in run_validation.py)
+rtol = 1e-6  # Relative Toleranz
+atol = 1e-6  # Absolute Toleranz
 ```
 
 ## 🚦 Status-Badges

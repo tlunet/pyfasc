@@ -14,6 +14,7 @@ from utils.ui_utils import load_custom_css, get_language_emoji
 # Import plot and table creation functions
 from scripts.create_bar_chart import create_bar_chart
 from scripts.create_loglog_chart import create_loglog_chart, create_loglog_chart_total
+from scripts.create_difference_chart import create_difference_chart
 from scripts.create_results_table import create_results_table
 from scripts.create_csv_data import create_csv_data
 from scripts.create_download_package import create_download_package
@@ -53,11 +54,9 @@ with col1:
         st.session_state.program1_code = uploaded_prog1_file.read().decode('utf-8')
         st.session_state.program1_filename = uploaded_prog1_file.name
         st.session_state.program1_language = detect_language(uploaded_prog1_file.name)
-        lang_emoji = get_language_emoji(st.session_state.program1_language)
-        st.success(f"✅ {lang_emoji} {uploaded_prog1_file.name}")
+        st.success(f"✅{uploaded_prog1_file.name}")
     elif 'program1_code' in st.session_state and st.session_state.program1_code:
-        lang_emoji = get_language_emoji(st.session_state.program1_language)
-        st.info(f"{lang_emoji} {st.session_state.get('program1_filename', 'file')} loaded")
+        st.info(f"{st.session_state.get('program1_filename', 'file')} loaded")
 
 with col2:
     st.markdown("**Program 2 (.py/.cpp/.jl)**")
@@ -66,11 +65,9 @@ with col2:
         st.session_state.program2_code = uploaded_prog2_file.read().decode('utf-8')
         st.session_state.program2_filename = uploaded_prog2_file.name
         st.session_state.program2_language = detect_language(uploaded_prog2_file.name)
-        lang_emoji = get_language_emoji(st.session_state.program2_language)
-        st.success(f"✅ {lang_emoji} {uploaded_prog2_file.name}")
+        st.success(f"✅{uploaded_prog2_file.name}")
     elif 'program2_code' in st.session_state and st.session_state.program2_code:
-        lang_emoji = get_language_emoji(st.session_state.program2_language)
-        st.info(f"{lang_emoji} {st.session_state.get('program2_filename', 'file')} loaded")
+        st.info(f"{st.session_state.get('program2_filename', 'file')} loaded")
 
 with col3:
     st.markdown("**Configuration File**")
@@ -80,43 +77,10 @@ with col3:
         st.session_state.config_filename = uploaded_config_file.name
         st.success(f"✅ {uploaded_config_file.name}")
     elif 'config_content' in st.session_state and st.session_state.config_content:
-        st.info(f"📄 {st.session_state.get('config_filename', 'config.txt')} loaded")
-
-# Show file previews
-if st.session_state.get('program1_code') or st.session_state.get('program2_code') or st.session_state.get('config_content'):
-    with st.expander("👁️ Preview Uploaded Files", expanded=False):
-        preview_tab1, preview_tab2, preview_tab3 = st.tabs(["Program 1", "Program 2", "Config"])
-        
-        with preview_tab1:
-            if st.session_state.get('program1_code'):
-                lang = st.session_state.get('program1_language', 'text')
-                from utils.ui_utils import get_language_display_name
-                lang_display = get_language_display_name(lang)
-                st.code(st.session_state.program1_code[:1000] + ("..." if len(st.session_state.program1_code) > 1000 else ""), language=lang_display)
-            else:
-                st.info("No program 1 uploaded yet")
-        
-        with preview_tab2:
-            if st.session_state.get('program2_code'):
-                lang = st.session_state.get('program2_language', 'text')
-                from utils.ui_utils import get_language_display_name
-                lang_display = get_language_display_name(lang)
-                st.code(st.session_state.program2_code[:1000] + ("..." if len(st.session_state.program2_code) > 1000 else ""), language=lang_display)
-            else:
-                st.info("No program 2 uploaded yet")
-        
-        with preview_tab3:
-            if st.session_state.get('config_content'):
-                st.code(st.session_state.config_content[:1000] + ("..." if len(st.session_state.config_content) > 1000 else ""), language="text")
-                # Show number of config blocks
-                config_blocks = st.session_state.config_content.strip().split("\n\n")
-                num_blocks = len([b for b in config_blocks if b.strip()])
-                st.info(f"📊 Detected {num_blocks} configuration block(s)")
-            else:
-                st.info("No config file uploaded yet")
+        st.info(f"{st.session_state.get('config_filename', 'config.txt')} loaded")
 
 # Benchmark execution
-st.markdown('<div class="section-header">🚀 Run Benchmark</div>', unsafe_allow_html=True)
+st.markdown('<div class="section-header">Run Benchmark</div>', unsafe_allow_html=True)
 
 # Check if everything is ready
 files_provided = bool(
@@ -140,7 +104,7 @@ col1, col2 = st.columns([1, 3])
 
 with col1:
     run_button = st.button(
-        "🏃‍♂️ Run Benchmark",
+        "Run Benchmark",
         disabled=not files_provided,
         type="primary"
     )
@@ -178,6 +142,12 @@ if run_button and files_provided:
                 # Copy utils and adapters directories (needed by diagnosetool.py)
                 shutil.copytree(os.path.join(original_cwd, 'utils'), 'utils')
                 shutil.copytree(os.path.join(original_cwd, 'adapters'), 'adapters')
+
+                # Copy existing results if available (to avoid re-running already measured configs)
+                existing_results_path = os.path.join(original_cwd, 'results', 'all_metrics.json')
+                if os.path.exists(existing_results_path):
+                    os.makedirs('results', exist_ok=True)
+                    shutil.copy(existing_results_path, 'results/all_metrics.json')
                 
                 success, results = run_benchmark(
                     prog1_filename, 
@@ -192,13 +162,6 @@ if run_button and files_provided:
                     if os.path.exists(os.path.join(original_cwd, 'results')):
                         shutil.rmtree(os.path.join(original_cwd, 'results'))
                     shutil.copytree('results', os.path.join(original_cwd, 'results'))
-                
-                # Copy gif_frames back if they exist
-                if os.path.exists('gif_frames'):
-                    gif_frames_dest = os.path.join(original_cwd, 'gif_frames')
-                    if os.path.exists(gif_frames_dest):
-                        shutil.rmtree(gif_frames_dest)
-                    shutil.copytree('gif_frames', gif_frames_dest)
                 
             finally:
                 os.chdir(original_cwd)
@@ -250,18 +213,24 @@ if st.session_state.benchmark_results:
     # Performance plots
     line_chart_path = create_loglog_chart(results)
     line_chart_total_path = create_loglog_chart_total(results)
+    diff_chart_path = create_difference_chart()
     bar_fig = create_bar_chart(results)
     
     if line_chart_path and os.path.exists(line_chart_path):
         st.markdown("### 📈 Execution Time Comparison (Log-Log)")
         st.image(line_chart_path, use_column_width=True, 
                 caption="Execution time only (compilation excluded) - logarithmic scales on both axes")
-    
+
     if line_chart_total_path and os.path.exists(line_chart_total_path):
         st.markdown("### 📈 Total Time Comparison (Log-Log)")
         st.image(line_chart_total_path, use_column_width=True, 
                 caption="Total time including compilation - logarithmic scales on both axes")
-    
+
+    if diff_chart_path and os.path.exists(diff_chart_path):
+        st.markdown("### 📉 Runtime Difference Chart")
+        st.image(diff_chart_path, use_column_width=True, 
+                caption="Absolute difference in execution time between the two programs")
+
     if bar_fig:
         st.markdown("### 📊 Runtime Comparison (Bar Chart)")
         st.plotly_chart(bar_fig, use_container_width=True)

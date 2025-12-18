@@ -6,13 +6,15 @@ on:
     branches: [ main, develop ]
     paths:
       - 'codes/01_advDiffSolver/src/**'
-      - 'codes/01_advDiffSolver/tests/grid_convergence_validator.py'
+      - 'codes/01_advDiffSolver/tests/run_validation.py'
+      - 'codes/01_advDiffSolver/scripts/run_*_multi_*.py'
       - '.github/workflows/grid-convergence-validation.yml'
   pull_request:
     branches: [ main ]
     paths:
       - 'codes/01_advDiffSolver/src/**'
-      - 'codes/01_advDiffSolver/tests/grid_convergence_validator.py'
+      - 'codes/01_advDiffSolver/tests/run_validation.py'
+      - 'codes/01_advDiffSolver/scripts/run_*_multi_*.py'
       - '.github/workflows/grid-convergence-validation.yml'
 
 jobs:
@@ -43,39 +45,13 @@ jobs:
         echo "Changed files:"
         echo "$CHANGED_FILES"
         
-        # Extract Python files
-        PYTHON_FILES=$(echo "$CHANGED_FILES" | grep '\.py$' || true)
-        # Extract C++ files
-        CPP_FILES=$(echo "$CHANGED_FILES" | grep '\.cpp$' || true)
-        # Extract Julia files
-        JULIA_FILES=$(echo "$CHANGED_FILES" | grep '\.jl$' || true)
-        
-        # Set outputs
-        if [ -n "$PYTHON_FILES" ]; then
-          echo "python_changed=true" >> $GITHUB_OUTPUT
-          echo "python_files<<EOF" >> $GITHUB_OUTPUT
-          echo "$PYTHON_FILES" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+        # Check if any source files changed
+        if [ -n "$CHANGED_FILES" ]; then
+          echo "source_changed=true" >> $GITHUB_OUTPUT
+          echo "Source files changed - validation will run"
         else
-          echo "python_changed=false" >> $GITHUB_OUTPUT
-        fi
-        
-        if [ -n "$CPP_FILES" ]; then
-          echo "cpp_changed=true" >> $GITHUB_OUTPUT
-          echo "cpp_files<<EOF" >> $GITHUB_OUTPUT
-          echo "$CPP_FILES" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-        else
-          echo "cpp_changed=false" >> $GITHUB_OUTPUT
-        fi
-        
-        if [ -n "$JULIA_FILES" ]; then
-          echo "julia_changed=true" >> $GITHUB_OUTPUT
-          echo "julia_files<<EOF" >> $GITHUB_OUTPUT
-          echo "$JULIA_FILES" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
-        else
-          echo "julia_changed=false" >> $GITHUB_OUTPUT
+          echo "source_changed=false" >> $GITHUB_OUTPUT
+          echo "No source files changed - skipping validation"
         fi
     
     # Set up Python environment
@@ -92,104 +68,17 @@ jobs:
     
     # Install C++ compiler
     - name: Install C++ compiler
-      if: steps.detect-changes.outputs.cpp_changed == 'true'
+      if: steps.detect-changes.outputs.source_changed == 'true'
       run: |
         sudo apt-get update
         sudo apt-get install -y g++ build-essential
     
-    # Install Julia
-    - name: Install Julia
-      if: steps.detect-changes.outputs.julia_changed == 'true'
-      uses: julia-actions/setup-julia@v1
-      with:
-        version: '1.9'
-    
-    # Validate Python files
-    - name: Validate Python Grid Convergence
-      if: steps.detect-changes.outputs.python_changed == 'true'
+    # Run combined validation
+    - name: Run Combined Validation
+      if: steps.detect-changes.outputs.source_changed == 'true'
       run: |
-        echo "==================================================="
-        echo "Testing Python implementations with Grid Convergence"
-        echo "==================================================="
-        
-        EXIT_CODE=0
-        while IFS= read -r file; do
-          if [ -n "$file" ]; then
-            echo ""
-            echo "Testing: $file"
-            echo "---------------------------------------------------"
-            
-            # Extract relative path from codes/01_advDiffSolver/
-            RELATIVE_FILE="${file#codes/01_advDiffSolver/}"
-            
-            if python codes/01_advDiffSolver/tests/grid_convergence_validator.py "$file" python; then
-              echo "✅ PASSED: $file"
-            else
-              echo "❌ FAILED: $file"
-              EXIT_CODE=1
-            fi
-          fi
-        done <<< "${{ steps.detect-changes.outputs.python_files }}"
-        
-        exit $EXIT_CODE
-    
-    # Validate C++ files
-    - name: Validate C++ Grid Convergence
-      if: steps.detect-changes.outputs.cpp_changed == 'true'
-      run: |
-        echo "==================================================="
-        echo "Testing C++ implementations with Grid Convergence"
-        echo "==================================================="
-        
-        EXIT_CODE=0
-        while IFS= read -r file; do
-          if [ -n "$file" ]; then
-            echo ""
-            echo "Testing: $file"
-            echo "---------------------------------------------------"
-            
-            # Extract relative path from codes/01_advDiffSolver/
-            RELATIVE_FILE="${file#codes/01_advDiffSolver/}"
-            
-            if python codes/01_advDiffSolver/tests/grid_convergence_validator.py "$file" cpp; then
-              echo "✅ PASSED: $file"
-            else
-              echo "❌ FAILED: $file"
-              EXIT_CODE=1
-            fi
-          fi
-        done <<< "${{ steps.detect-changes.outputs.cpp_files }}"
-        
-        exit $EXIT_CODE
-    
-    # Validate Julia files
-    - name: Validate Julia Grid Convergence
-      if: steps.detect-changes.outputs.julia_changed == 'true'
-      run: |
-        echo "==================================================="
-        echo "Testing Julia implementations with Grid Convergence"
-        echo "==================================================="
-        
-        EXIT_CODE=0
-        while IFS= read -r file; do
-          if [ -n "$file" ]; then
-            echo ""
-            echo "Testing: $file"
-            echo "---------------------------------------------------"
-            
-            # Extract relative path from codes/01_advDiffSolver/
-            RELATIVE_FILE="${file#codes/01_advDiffSolver/}"
-            
-            if python codes/01_advDiffSolver/tests/grid_convergence_validator.py "$file" julia; then
-              echo "✅ PASSED: $file"
-            else
-              echo "❌ FAILED: $file"
-              EXIT_CODE=1
-            fi
-          fi
-        done <<< "${{ steps.detect-changes.outputs.julia_files }}"
-        
-        exit $EXIT_CODE
+        cd codes/01_advDiffSolver
+        python tests/run_validation.py
     
     # Summary
     - name: Validation Summary
@@ -199,7 +88,5 @@ jobs:
         echo "==================================================="
         echo "Grid Convergence Validation Complete"
         echo "==================================================="
-        echo "Python files tested: ${{ steps.detect-changes.outputs.python_changed }}"
-        echo "C++ files tested: ${{ steps.detect-changes.outputs.cpp_changed }}"
-        echo "Julia files tested: ${{ steps.detect-changes.outputs.julia_changed }}"
+        echo "Source files changed: ${{ steps.detect-changes.outputs.source_changed }}"
 

@@ -151,7 +151,13 @@ if __name__ == "__main__":
     p = Problem("input.txt")
     u0 = p.u.copy()
 
+    # Save initial state
+    np.savetxt("uInit.txt", u0[sIn, sIn])
+
     p.simulate()
+
+    # Save final state
+    np.savetxt("uEnd.txt", p.u[sIn, sIn])
 # uEnd = np.abs(p.u)  # remove some negative artefacts for plots
 
 # # Plotting

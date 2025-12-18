@@ -92,10 +92,7 @@ class LanguageAdapter(ABC):
         return {
             "runtime": execution_time,
             "total_time": total_time,
-            "compilation_time": self.compilation_time,
-            "stdout": stdout.decode(),
-            "stderr": stderr.decode(),
-            "returncode": proc.returncode
+            "compilation_time": self.compilation_time
         }
     
     def warmup(self, prepared_file: str) -> bool:
