@@ -43,6 +43,8 @@ def cpp_convergence_test(base_dir, temp_dir):
         subprocess.run(exec_cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         uNum = np.loadtxt(base_dir / "uEnd.txt")
         
+        np.savetxt(temp_dir / f"uEnd_cpp_{nX}x{nX}.txt", uNum)
+        
         r = nXRef // nX
         diff = uRef[::r, ::r] - uNum
         errors[nX] = np.sqrt(np.mean(diff**2))
@@ -105,14 +107,14 @@ def main():
         print("STEP 1: C++ CONVERGENCE TEST")
         print("="*60)
         
-        nXRef, conv_passed = cpp_convergence_test(base_dir, temp_dir)
+        conv_passed = cpp_convergence_test(base_dir, temp_dir)
         all_tests_passed = all_tests_passed and conv_passed
         
         print("\n" + "="*60)
         print("STEP 2: COMPARE IMPLEMENTATIONS")
         print("="*60)
         
-        py_passed = compare_with_reference(base_dir, temp_dir, nXRef, "python")
+        py_passed = compare_with_reference(base_dir, temp_dir, 128, "python")
         all_tests_passed = all_tests_passed and py_passed
         
     except Exception as e:
