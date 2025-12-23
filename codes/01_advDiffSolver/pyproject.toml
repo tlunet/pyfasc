@@ -52,7 +52,7 @@ docs = [
 ]
 
 [project.scripts]
-codebench = "tests.diagnosetool:main"
+codebench = "scripts.diagnosetool:main"
 
 [project.urls]
 Homepage = "https://github.com/tlunet/pyfasc"

@@ -69,7 +69,7 @@ setup(
     # Entry points for command-line tools
     entry_points={
         'console_scripts': [
-            'codebench=tests.diagnosetool:main',
+            'codebench=scripts.diagnosetool:main',
         ],
     },
     

@@ -154,7 +154,7 @@ if run_button and files_provided:
                 os.chdir(temp_dir)
                 
                 # Copy diagnosetool.py
-                shutil.copy(os.path.join(original_cwd, 'tests', 'diagnosetool.py'), '.')
+                shutil.copy(os.path.join(original_cwd, 'scripts', 'diagnosetool.py'), '.')
                 
                 # Copy utils and adapters directories (needed by diagnosetool.py)
                 shutil.copytree(os.path.join(original_cwd, 'utils'), 'utils')
