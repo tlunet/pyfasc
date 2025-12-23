@@ -100,7 +100,7 @@ if not files_provided:
     
     st.warning(f"⚠️ Please upload: {', '.join(missing_items)}")
 
-col1, col2 = st.columns([1, 3])
+col1, col2, col3 = st.columns([1, 1, 2])
 
 with col1:
     run_button = st.button(
@@ -108,6 +108,23 @@ with col1:
         disabled=not files_provided,
         type="primary"
     )
+
+with col2:
+    delete_db_button = st.button(
+        "🗑️ Delete Database",
+        type="secondary"
+    )
+
+if delete_db_button:
+    all_metrics_path = os.path.join('results', 'all_metrics.json')
+    if os.path.exists(all_metrics_path):
+        try:
+            os.remove(all_metrics_path)
+            st.success("✅ Database (all_metrics.json) successfully deleted!")
+        except Exception as e:
+            st.error(f"❌ Failed to delete database: {str(e)}")
+    else:
+        st.info("ℹ️ No database file found to delete.")
 
 if run_button and files_provided:
     with st.spinner("Running benchmark... This may take a few minutes."):

@@ -1,1 +1,1 @@
-64 64 gauss diagonal 0.001 0.1 64
+256 256 gauss diagonal 0.001 0.1 256

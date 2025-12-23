@@ -4,7 +4,8 @@
 Quick convergence test for the numpy code
 """
 import os, sys
-sys.path.append(os.path.dirname(os.getcwd()))
+# Add the parent directory (01_advDiffSolver) to the path
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from src.program import Problem, sIn, np
 
 nX0 = 32
