@@ -11,12 +11,13 @@ import subprocess
 import time
 from typing import List, Tuple
 from .base_adapter import LanguageAdapter
+from .config_parser import parse_compiler_config
 
 
 class CppAdapter(LanguageAdapter):
     """Adapter for C++ programs."""
     
-    def __init__(self):
+    def __init__(self, config_file: str = None):
         super().__init__()
         self.name = "cpp"
         self.extensions = [".cpp", ".cc", ".cxx", ".c++"]
@@ -24,6 +25,17 @@ class CppAdapter(LanguageAdapter):
         self.display_name = "C++"
         self.emoji = "⚙️"
         self._compiled_binary = None
+        self._custom_flags = self._load_flags(config_file)
+        self._custom_flags = self._load_flags(config_file)
+    
+    def _load_flags(self, config_file: str) -> List[str]:
+        """Load compiler flags from config file"""
+        if not config_file or not os.path.exists(config_file):
+            return ["-O2"]
+        
+        config = parse_compiler_config(config_file)
+        flags_str = config.get("cpp", "-O2")
+        return flags_str.split() if flags_str else ["-O2"]
     
     def _find_compiler(self) -> Tuple[str, List[str]]:
         """
@@ -87,11 +99,10 @@ class CppAdapter(LanguageAdapter):
             
             # Build compilation command based on compiler
             if compiler_name == "msvc":
-                # MSVC syntax
-                compile_cmd = compiler_cmd + ["/O2", f"/Fe:{binary}", source_file]
+                msvc_flags = [f.replace("-O", "/O") for f in self._custom_flags]
+                compile_cmd = compiler_cmd + msvc_flags + [f"/Fe:{binary}", source_file]
             else:
-                # GCC/Clang syntax
-                compile_cmd = compiler_cmd + [source_file, "-O2", "-o", binary]
+                compile_cmd = compiler_cmd + [source_file] + self._custom_flags + ["-o", binary]
             
             print(f"Compiling with: {' '.join(compile_cmd)}")
             

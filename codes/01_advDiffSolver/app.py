@@ -54,9 +54,11 @@ with col1:
         st.session_state.program1_code = uploaded_prog1_file.read().decode('utf-8')
         st.session_state.program1_filename = uploaded_prog1_file.name
         st.session_state.program1_language = detect_language(uploaded_prog1_file.name)
-        st.success(f"✅{uploaded_prog1_file.name}")
-    elif 'program1_code' in st.session_state and st.session_state.program1_code:
-        st.info(f"{st.session_state.get('program1_filename', 'file')} loaded")
+    elif uploaded_prog1_file is None and 'program1_code' in st.session_state:
+        # Clear session state when file is removed
+        del st.session_state.program1_code
+        del st.session_state.program1_filename
+        del st.session_state.program1_language
 
 with col2:
     st.markdown("**Program 2 (.py/.cpp/.jl)**")
@@ -65,9 +67,11 @@ with col2:
         st.session_state.program2_code = uploaded_prog2_file.read().decode('utf-8')
         st.session_state.program2_filename = uploaded_prog2_file.name
         st.session_state.program2_language = detect_language(uploaded_prog2_file.name)
-        st.success(f"✅{uploaded_prog2_file.name}")
-    elif 'program2_code' in st.session_state and st.session_state.program2_code:
-        st.info(f"{st.session_state.get('program2_filename', 'file')} loaded")
+    elif uploaded_prog2_file is None and 'program2_code' in st.session_state:
+        # Clear session state when file is removed
+        del st.session_state.program2_code
+        del st.session_state.program2_filename
+        del st.session_state.program2_language
 
 with col3:
     st.markdown("**Configuration File**")
@@ -75,9 +79,10 @@ with col3:
     if uploaded_config_file is not None:
         st.session_state.config_content = uploaded_config_file.read().decode('utf-8')
         st.session_state.config_filename = uploaded_config_file.name
-        st.success(f"✅ {uploaded_config_file.name}")
-    elif 'config_content' in st.session_state and st.session_state.config_content:
-        st.info(f"{st.session_state.get('config_filename', 'config.txt')} loaded")
+    elif uploaded_config_file is None and 'config_content' in st.session_state:
+        # Clear session state when file is removed
+        del st.session_state.config_content
+        del st.session_state.config_filename
 
 # Benchmark execution
 st.markdown('<div class="section-header">Run Benchmark</div>', unsafe_allow_html=True)
@@ -86,7 +91,7 @@ st.markdown('<div class="section-header">Run Benchmark</div>', unsafe_allow_html
 files_provided = bool(
     st.session_state.get('program1_code') and 
     st.session_state.get('program2_code') and 
-    st.session_state.config_content
+    st.session_state.get('config_content')
 )
 
 if not files_provided:
@@ -99,6 +104,8 @@ if not files_provided:
         missing_items.append("Config file")
     
     st.warning(f"⚠️ Please upload: {', '.join(missing_items)}")
+
+st.markdown('<p style="color: #888888; font-size: 0.9em; font-style: italic;">(Don\'t forget to delete the database before using new configurations)</p>', unsafe_allow_html=True)
 
 col1, col2, col3 = st.columns([1, 1, 2])
 
@@ -234,19 +241,19 @@ if st.session_state.benchmark_results:
     bar_fig = create_bar_chart(results)
     
     if line_chart_path and os.path.exists(line_chart_path):
-        st.markdown("### 📈 Execution Time Comparison (Log-Log)")
-        st.image(line_chart_path, use_column_width=True, 
-                caption="Execution time only (compilation excluded) - logarithmic scales on both axes")
+        st.markdown("### 📈 Runtime Comparison (Log-Log)")
+        st.image(line_chart_path, use_container_width=True, 
+                caption="Runtime only (compilation excluded) - logarithmic scales on both axes")
 
     if line_chart_total_path and os.path.exists(line_chart_total_path):
         st.markdown("### 📈 Total Time Comparison (Log-Log)")
-        st.image(line_chart_total_path, use_column_width=True, 
+        st.image(line_chart_total_path, use_container_width=True, 
                 caption="Total time including compilation - logarithmic scales on both axes")
 
     if diff_chart_path and os.path.exists(diff_chart_path):
         st.markdown("### 📉 Runtime Difference Chart")
-        st.image(diff_chart_path, use_column_width=True, 
-                caption="Absolute difference in execution time between the two programs")
+        st.image(diff_chart_path, use_container_width=True, 
+                caption="Relative Difference in runtime between the two programs - logarithmic scale on X axis")
 
     if bar_fig:
         st.markdown("### 📊 Runtime Comparison (Bar Chart)")

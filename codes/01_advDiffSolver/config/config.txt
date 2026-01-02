@@ -1,0 +1,8 @@
+# Configuration File
+# First lines have to be the configurations, then input blocks
+# Each input block defines parameters that will be passed to ALL programs being benchmarked
+# Separate multiple input sets with blank lines
+
+cpp: -march=native -O3 -std=c++20
+
+4096 4096 gauss diagonal 0.0 1 400

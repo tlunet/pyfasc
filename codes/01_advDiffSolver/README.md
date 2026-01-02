@@ -32,7 +32,7 @@ A flexible benchmarking tool for comparing Python and C++ program performance.##
 
 CodeBench/│   ├── input.txt          # Single input configuration
 
-├── app.py                 # Streamlit web interface (MAIN ENTRY POINT)│   ├── inputs.txt         # Multiple input configurations
+├── app.py                 # Streamlit web interface (MAIN ENTRY POINT)│   ├── config.txt         # Multiple input configurations
 
 ├── tests/│   ├── test_inputs.txt
 

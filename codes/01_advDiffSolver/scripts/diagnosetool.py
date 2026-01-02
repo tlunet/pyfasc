@@ -18,11 +18,14 @@ def read_config_blocks(filename):
     # Split by double newline to support multiple parameter sets
     blocks = content.strip().split("\n\n")
     
-    # Filter each block to remove comment lines
+    # Filter each block to remove comment lines and compiler config lines
     filtered_blocks = []
     for block in blocks:
-        # Remove lines starting with # (comments)
-        lines = [line for line in block.split('\n') if line.strip() and not line.strip().startswith('#')]
+        # Remove lines starting with # (comments) and compiler config lines (e.g., cpp:, python:)
+        lines = [line for line in block.split('\n') 
+                 if line.strip() 
+                 and not line.strip().startswith('#')
+                 and not (':' in line and not line[0].isdigit())]
         if lines:
             filtered_blocks.append('\n'.join(lines))
     
@@ -43,7 +46,7 @@ def main():
     args = parser.parse_args()
 
     # Get the language registry
-    registry = get_registry()
+    registry = get_registry(config_file=args.config)
     
     # Collect all programs with their adapters
     programs = []
@@ -137,9 +140,19 @@ def main():
     all_results = existing_results.copy()
 
     for idx, config_block in enumerate(config_blocks):
-        if any(result['config'] == config_block for result in all_results):
-            print(f"⏭️ Skipping config block #{idx + 1} (already measured)")
+        current_languages = set(prog['type'] for prog in programs)
+        already_measured = False
+        for result in all_results:
+            if result['config'] == config_block:
+                measured_languages = set(key for key in result.keys() if key != 'config')
+                if measured_languages == current_languages:
+                    already_measured = True
+                    break
+        
+        if already_measured:
+            print(f"⏭️ Skipping config block #{idx + 1} (already measured with same languages)")
             continue
+
         print(f"\n--- Configuration Block #{idx + 1} ---")
         print(f"Config preview: {config_block[:100]}..." if len(config_block) > 100 else f"Config: {config_block}")
         

@@ -6,6 +6,10 @@
 #include <cmath>
 #include <chrono>
 
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 using std::vector, std::istream, std::string, std::ifstream, std::ofstream;
 using std::cout, std::endl;
 

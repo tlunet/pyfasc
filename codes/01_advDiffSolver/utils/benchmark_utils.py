@@ -42,7 +42,8 @@ def run_benchmark(program1_file, program1_lang, program2_file, program2_lang, co
         )
         
         if result.returncode != 0:
-            return False, f"Benchmark failed: {result.stderr}"
+            error_msg = result.stderr.strip() if result.stderr else result.stdout.strip()
+            return False, f"Benchmark failed:\n{error_msg}\nCommand: {' '.join(cmd)}"
         
         # Load results
         try:

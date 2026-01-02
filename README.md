@@ -64,7 +64,7 @@ CodeBench/
         │   └── ui_utils.py            # UI-Komponenten & Styling
         │
         ├── config/                    # Konfigurations-Beispiele
-        │   └── inputs.txt             # Beispiel-Konfiguration
+        │   └── config.txt             # Beispiel-Konfiguration
         │
         ├── tests/                     # Validierung & Tests
         │   ├── convTestNumpy.py       # Konvergenz-Tests
@@ -127,7 +127,7 @@ cd CodeBench/codes/01_advDiffSolver
 python scripts/diagnosetool.py \
     --py src/program.py \
     --cpp src/program.cpp \
-    --config config/inputs.txt
+    --config config/config.txt
 ```
 
 ## 📖 Verwendung

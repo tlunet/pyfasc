@@ -32,9 +32,5 @@ gif_frames/
 .idea/
 *.sublime-*
 
-# Results (optional - comment out if you want to track results)
-# results/*.png
-# results/*.gif
-# results/*.json
-
-docs/besprechung.txt
+# Documentation
+docs/

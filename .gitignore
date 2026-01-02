@@ -37,6 +37,3 @@ venv
 .coverage*
 htmlcov
 sitecustomize.py
-
-# Doc
-docs/

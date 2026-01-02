@@ -4,21 +4,33 @@ Julia Language Adapter
 Handles execution of Julia programs.
 """
 
+import os
 import shutil
 from typing import List, Tuple
 from .base_adapter import LanguageAdapter
+from .config_parser import parse_compiler_config
 
 
 class JuliaAdapter(LanguageAdapter):
     """Adapter for Julia programs."""
     
-    def __init__(self):
+    def __init__(self, config_file: str = None):
         super().__init__()
         self.name = "julia"
         self.extensions = [".jl"]
         self.requires_compilation = False
         self.display_name = "Julia"
         self.emoji = "🔬"
+        self._custom_flags = self._load_flags(config_file)
+    
+    def _load_flags(self, config_file: str) -> List[str]:
+        """Load Julia flags from config file"""
+        if not config_file or not os.path.exists(config_file):
+            return []
+        
+        config = parse_compiler_config(config_file)
+        flags_str = config.get("julia", "")
+        return flags_str.split() if flags_str else []
     
     def prepare(self, source_file: str) -> Tuple[bool, str, str]:
         """
@@ -43,9 +55,9 @@ class JuliaAdapter(LanguageAdapter):
             prepared_file: Path to the Julia source file
             
         Returns:
-            List containing ['julia', source_file]
+            List containing ['julia', flags..., source_file]
         """
-        return ["julia", prepared_file]
+        return ["julia"] + self._custom_flags + [prepared_file]
     
     def cleanup(self, prepared_file: str) -> None:
         """

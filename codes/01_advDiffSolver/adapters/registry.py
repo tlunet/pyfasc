@@ -23,18 +23,19 @@ class LanguageRegistry:
     - Get lists of supported languages and extensions
     """
     
-    def __init__(self):
+    def __init__(self, config_file: str = None):
         """Initialize the registry with built-in adapters."""
         self._adapters_by_name: Dict[str, LanguageAdapter] = {}
         self._adapters_by_extension: Dict[str, LanguageAdapter] = {}
+        self._config_file = config_file
         self._register_builtin_adapters()
     
     def _register_builtin_adapters(self) -> None:
         """Register all built-in language adapters."""
         builtin_adapters = [
             PythonAdapter(),
-            CppAdapter(),
-            JuliaAdapter(),
+            CppAdapter(config_file=self._config_file),
+            JuliaAdapter(config_file=self._config_file),
         ]
         
         for adapter in builtin_adapters:
@@ -149,7 +150,7 @@ class LanguageRegistry:
 _global_registry: Optional[LanguageRegistry] = None
 
 
-def get_registry() -> LanguageRegistry:
+def get_registry(config_file: str = None) -> LanguageRegistry:
     """
     Get the global language registry instance.
     
@@ -158,7 +159,7 @@ def get_registry() -> LanguageRegistry:
     """
     global _global_registry
     if _global_registry is None:
-        _global_registry = LanguageRegistry()
+        _global_registry = LanguageRegistry(config_file=config_file)
     return _global_registry
 
 

@@ -2,118 +2,170 @@
   {
     "config": "1 1 gauss diagonal 0.0 1 400",
     "python": {
-      "runtime": 0.2969851493835449,
-      "total_time": 0.2969851493835449,
+      "runtime": 0.3498997688293457,
+      "total_time": 0.3498997688293457,
       "compilation_time": 0.0
     },
     "cpp": {
-      "runtime": 0.013615846633911133,
-      "total_time": 1.2852914333343506,
-      "compilation_time": 1.2716755867004395
+      "runtime": 0.018826961517333984,
+      "total_time": 2.657522201538086,
+      "compilation_time": 2.638695240020752
     }
   },
   {
     "config": "2 2 gauss diagonal 0.0 1 400",
     "python": {
-      "runtime": 0.23671746253967285,
-      "total_time": 0.23671746253967285,
+      "runtime": 0.32283878326416016,
+      "total_time": 0.32283878326416016,
       "compilation_time": 0.0
     },
     "cpp": {
-      "runtime": 0.01659226417541504,
-      "total_time": 1.2882678508758545,
-      "compilation_time": 1.2716755867004395
+      "runtime": 0.01593947410583496,
+      "total_time": 2.654634714126587,
+      "compilation_time": 2.638695240020752
     }
   },
   {
     "config": "4 4 gauss diagonal 0.0 1 400",
     "python": {
-      "runtime": 0.3136110305786133,
-      "total_time": 0.3136110305786133,
+      "runtime": 0.3023242950439453,
+      "total_time": 0.3023242950439453,
       "compilation_time": 0.0
     },
     "cpp": {
-      "runtime": 0.01288294792175293,
-      "total_time": 1.2845585346221924,
-      "compilation_time": 1.2716755867004395
+      "runtime": 0.015477657318115234,
+      "total_time": 2.654172897338867,
+      "compilation_time": 2.638695240020752
     }
   },
   {
     "config": "8 8 gauss diagonal 0.0 1 400",
     "python": {
-      "runtime": 0.25255751609802246,
-      "total_time": 0.25255751609802246,
+      "runtime": 0.32248353958129883,
+      "total_time": 0.32248353958129883,
       "compilation_time": 0.0
     },
     "cpp": {
-      "runtime": 0.016478776931762695,
-      "total_time": 1.2881543636322021,
-      "compilation_time": 1.2716755867004395
+      "runtime": 0.01776885986328125,
+      "total_time": 2.656464099884033,
+      "compilation_time": 2.638695240020752
     }
   },
   {
     "config": "16 16 gauss diagonal 0.0 1 400",
     "python": {
-      "runtime": 0.2614123821258545,
-      "total_time": 0.2614123821258545,
+      "runtime": 0.3152427673339844,
+      "total_time": 0.3152427673339844,
       "compilation_time": 0.0
     },
     "cpp": {
-      "runtime": 0.020772933959960938,
-      "total_time": 1.2924485206604004,
-      "compilation_time": 1.2716755867004395
+      "runtime": 0.024264812469482422,
+      "total_time": 2.6629600524902344,
+      "compilation_time": 2.638695240020752
     }
   },
   {
     "config": "32 32 gauss diagonal 0.0 1 400",
     "python": {
-      "runtime": 0.2751178741455078,
-      "total_time": 0.2751178741455078,
+      "runtime": 0.3707468509674072,
+      "total_time": 0.3707468509674072,
       "compilation_time": 0.0
     },
     "cpp": {
-      "runtime": 0.04015350341796875,
-      "total_time": 1.3118290901184082,
-      "compilation_time": 1.2716755867004395
+      "runtime": 0.04673433303833008,
+      "total_time": 2.685429573059082,
+      "compilation_time": 2.638695240020752
     }
   },
   {
     "config": "64 64 gauss diagonal 0.0 1 400",
     "python": {
-      "runtime": 0.337139368057251,
-      "total_time": 0.337139368057251,
+      "runtime": 0.3812992572784424,
+      "total_time": 0.3812992572784424,
       "compilation_time": 0.0
     },
     "cpp": {
-      "runtime": 0.13152694702148438,
-      "total_time": 1.4032025337219238,
-      "compilation_time": 1.2716755867004395
+      "runtime": 0.12185096740722656,
+      "total_time": 2.7605462074279785,
+      "compilation_time": 2.638695240020752
     }
   },
   {
     "config": "128 128 gauss diagonal 0.0 1 400",
     "python": {
-      "runtime": 0.5795133113861084,
-      "total_time": 0.5795133113861084,
+      "runtime": 0.6933085918426514,
+      "total_time": 0.6933085918426514,
       "compilation_time": 0.0
     },
     "cpp": {
-      "runtime": 0.5326981544494629,
-      "total_time": 1.8043737411499023,
-      "compilation_time": 1.2716755867004395
+      "runtime": 0.43719053268432617,
+      "total_time": 3.075885772705078,
+      "compilation_time": 2.638695240020752
     }
   },
   {
     "config": "256 256 gauss diagonal 0.0 1 400",
     "python": {
-      "runtime": 1.9293887615203857,
-      "total_time": 1.9293887615203857,
+      "runtime": 2.186159610748291,
+      "total_time": 2.186159610748291,
       "compilation_time": 0.0
     },
     "cpp": {
-      "runtime": 2.3632938861846924,
-      "total_time": 3.634969472885132,
-      "compilation_time": 1.2716755867004395
+      "runtime": 1.9127910137176514,
+      "total_time": 4.551486253738403,
+      "compilation_time": 2.638695240020752
+    }
+  },
+  {
+    "config": "512 512 gauss diagonal 0.0 1 400",
+    "python": {
+      "runtime": 10.910057306289673,
+      "total_time": 10.910057306289673,
+      "compilation_time": 0.0
+    },
+    "cpp": {
+      "runtime": 8.478860139846802,
+      "total_time": 11.006297588348389,
+      "compilation_time": 2.527437448501587
+    }
+  },
+  {
+    "config": "1024 1024 gauss diagonal 0.0 1 400",
+    "python": {
+      "runtime": 78.76301598548889,
+      "total_time": 78.76301598548889,
+      "compilation_time": 0.0
+    },
+    "cpp": {
+      "runtime": 34.88333439826965,
+      "total_time": 37.816295862197876,
+      "compilation_time": 2.9329614639282227
+    }
+  },
+  {
+    "config": "2048 2048 gauss diagonal 0.0 1 400",
+    "python": {
+      "runtime": 300.0646367073059,
+      "total_time": 300.0646367073059,
+      "compilation_time": 0.0
+    },
+    "cpp": {
+      "runtime": 139.67899990081787,
+      "total_time": 142.16835165023804,
+      "compilation_time": 2.489351749420166
+    }
+  },
+  {
+    "config": "4096 4096 gauss diagonal 0.0 1 400",
+    "python": {
+      "runtime": 1067.0474994182587,
+      "total_time": 1067.0474994182587,
+      "compilation_time": 0.0
+    },
+    "cpp": {
+      "runtime": 600.5058007240295,
+      "total_time": 603.0099332332611,
+      "compilation_time": 2.5041325092315674
     }
   }
 ]
